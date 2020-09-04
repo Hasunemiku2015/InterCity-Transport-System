@@ -1,7 +1,5 @@
 package me.hasunemiku2015.its.ServerManager;
 
-import org.bukkit.World;
-
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -11,12 +9,12 @@ public class Client {
     private final String output;
     private final int port;
 
-    public Client(int port, int x, int y, int z, World world, List<String> Passenger) {
+    public Client(int port, int x, int y, int z, String world, List<String> Passenger) {
         this.port = port;
         String raw = "InterLink;";
 
         //Add Coors
-        String coors = raw + x + "," + y + "," + z + "," + world.getName();
+        String coors = raw + x + "," + y + "," + z + "," + world;
 
         //Add Passengers
         StringBuilder passengers = new StringBuilder();
@@ -24,9 +22,7 @@ public class Client {
             passengers.append(passenger).append(",");
         }
 
-        StringBuilder outputbuilder = new StringBuilder();
-        outputbuilder.append(coors).append(";").append(passengers);
-        output = outputbuilder.toString();
+        output = coors + ";" + passengers;
     }
 
     public void send() {
