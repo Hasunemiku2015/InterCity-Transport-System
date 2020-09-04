@@ -11,7 +11,6 @@ import me.hasunemiku2015.its.Main;
 import me.hasunemiku2015.its.ServerManager.Client;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -40,7 +39,12 @@ public class InterLink extends SignAction {
             int y = (int) Double.parseDouble(coors[1]);
             int z = (int) Double.parseDouble(coors[2]);
 
-            World world = event.getSign().getWorld();
+            String world = event.getSign().getWorld().getName();
+            try{
+                world = coors[4];
+            } catch (Exception ignored) {
+            }
+
 
             for (MinecartMember m : event.getMembers()) {
                 Entity entity = m.getEntity().getEntity().getPassenger();
