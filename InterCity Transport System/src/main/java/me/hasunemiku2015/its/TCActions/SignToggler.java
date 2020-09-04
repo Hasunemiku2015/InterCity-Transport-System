@@ -13,7 +13,7 @@ public class SignToggler {
     }
 
     public static void deinit(){
-        SignAction.register(its);
-        SignAction.register(itsr);
+        SignAction.unregister(its);
+        SignAction.unregister(itsr);
     }
 }
