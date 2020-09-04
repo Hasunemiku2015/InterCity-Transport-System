@@ -1,0 +1,5 @@
+name: InterCity-Transport-System
+version: 1.0
+main: me.hasunemiku2015.its.Main
+api-version: 1.15
+depend: [Train_Carts]
