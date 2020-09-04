@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 public class InterLinkRecieve extends SignAction {
     @Override
     public boolean match(SignActionEvent info) {
-        return info.isType("linkrecieve");
+        return info.isType("linkreceive");
     }
 
     @Override
