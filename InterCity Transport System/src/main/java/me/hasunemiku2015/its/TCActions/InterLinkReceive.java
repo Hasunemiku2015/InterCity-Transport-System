@@ -11,7 +11,6 @@ import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 public class InterLinkRecieve extends SignAction {
