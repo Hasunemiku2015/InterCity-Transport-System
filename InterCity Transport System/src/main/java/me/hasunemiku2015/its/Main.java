@@ -47,7 +47,7 @@ public class Main extends JavaPlugin implements PluginMessageListener {
         pm.registerEvents(new FreezeInterLinkPlayer(),this);
 
 
-        System.out.println("Is InnoCity Watersuno?");
+        Bukkit.getLogger().info("ICTS is initializing");
     }
 
     @Override
