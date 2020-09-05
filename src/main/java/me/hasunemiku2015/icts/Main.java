@@ -1,12 +1,13 @@
-package me.hasunemiku2015.its;
+package me.hasunemiku2015.icts;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import me.hasunemiku2015.its.ServerManager.FreezeInterLinkPlayer;
-import me.hasunemiku2015.its.ServerManager.FreezeInventory;
-import me.hasunemiku2015.its.ServerManager.Server;
-import me.hasunemiku2015.its.TCActions.SignToggler;
+import me.hasunemiku2015.icts.ServerManager.FreezeInterLinkPlayer;
+import me.hasunemiku2015.icts.ServerManager.FreezeInventory;
+import me.hasunemiku2015.icts.ServerManager.Server;
+import me.hasunemiku2015.icts.TCActions.SignToggler;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
