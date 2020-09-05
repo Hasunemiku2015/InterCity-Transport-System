@@ -1,43 +1,69 @@
 package me.hasunemiku2015.icts.ServerManager;
 
+import me.hasunemiku2015.icts.Main;
+
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 
 public class Client {
-    private final String output;
+    private Socket clientSocket;
+    private OutputStream outputStream;
     private final int port;
+    private boolean isConnected;
 
-    public Client(int port, int x, int y, int z, String world, List<String> Passenger) {
+    public Client(int port) {
         this.port = port;
-        String raw = "InterLink;";
 
-        //Add Coors
-        String coors = raw + x + "," + y + "," + z + "," + world;
-
-        //Add Passengers
-        StringBuilder passengers = new StringBuilder();
-        for (String passenger : Passenger) {
-            passengers.append(passenger).append(",");
+        try {
+            clientSocket = new Socket("localhost", port);
+            outputStream = clientSocket.getOutputStream();
+        } catch (IOException ex) {
+            isConnected = false;
+            ex.printStackTrace();
+            return;
         }
 
-        output = coors + ";" + passengers;
+        isConnected = true;
     }
 
-    public void send() {
-        //Send
-        try {
-            Socket soc = new Socket("localhost", port);
+    public Boolean isConnected() {
+        if (isConnected && !clientSocket.isClosed())
+            return true;
+        else
+            return false;
+    }
 
-            OutputStreamWriter os = new OutputStreamWriter(soc.getOutputStream());
-            PrintWriter pw = new PrintWriter(os);
+    public void send(String output) {
+        try {
+            PrintWriter pw = new PrintWriter(outputStream);
             pw.write(output);
             pw.flush();
 
-            pw.close();
-            soc.close();
-        } catch (Exception ignored) {
+            // Debug
+            Main.plugin.getLogger().info("Sent:");
+            Main.plugin.getLogger().info(output);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void close() {
+        try {
+            if (outputStream != null) {
+                outputStream.flush();
+                outputStream.close();
+            }
+
+            if (!clientSocket.isClosed())
+                clientSocket.close();
+
+            isConnected = false;
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }
