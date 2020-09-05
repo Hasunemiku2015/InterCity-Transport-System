@@ -2,6 +2,7 @@ package me.hasunemiku2015.icts.TCActions;
 
 import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.tc.Permission;
+import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
 import com.bergerkiller.bukkit.tc.controller.type.MinecartMemberRideable;
 import com.bergerkiller.bukkit.tc.events.SignActionEvent;
@@ -16,9 +17,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class InterLink extends SignAction {
 
@@ -32,18 +31,23 @@ public class InterLink extends SignAction {
         if (event.isAction(SignActionType.GROUP_ENTER) && event.isPowered()) {
             ConfigurationNode train = event.getGroup().saveConfig();
 
+            String trainName = Main.plugin.getConfig().getString("serverName") + "-" + event.getGroup().getProperties().getTrainName();
+            List<String> passengers = new ArrayList<String>();
             List<Player> players = new ArrayList<Player>();
-            List<String> uuids = new ArrayList<String>();
 
-            for (MinecartMember m : event.getMembers()) {
-                if (!(m instanceof MinecartMemberRideable))
+            String trainID = UUID.randomUUID().toString().split("-")[0];
+            MinecartGroup group = event.getGroup();
+            for (int i = 0; i < group.size(); i++) {
+                MinecartMember cart = group.get(i);
+
+                if (!(cart instanceof MinecartMemberRideable))
                     continue;
 
-                Entity entity = m.getEntity().getEntity().getPassenger();
+                Entity entity = cart.getEntity().getEntity().getPassenger();
                 if (entity instanceof Player) {
                     Player player = (Player) entity;
+                    passengers.add(player.getUniqueId() + ";" + trainID + ";" + i);
                     players.add(player);
-                    uuids.add(player.getUniqueId().toString());
                 }
             }
 
@@ -66,8 +70,9 @@ public class InterLink extends SignAction {
             packet.set("x", x);
             packet.set("y", y);
             packet.set("z", z);
-            packet.set("players", uuids);
-            packet.set("trainName", event.getGroup().getProperties().getTrainName());
+            packet.set("passengers", passengers);
+            packet.set("trainID", trainID);
+            packet.set("trainName", trainName);
             packet.set("train", train);
 
             event.getGroup().destroy();
@@ -78,14 +83,12 @@ public class InterLink extends SignAction {
                 client.close();
 
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
-                    for (Player p : players) {
-                        Main.plugin.send(p, server[0]);
-                    }
+                    for (Player player : players)
+                        Main.plugin.send(player, server[0]);
                 }, 5L);
             } else {
-                for (Player p : players){
-                    p.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + "Error: Cannot send Players to the Same Server");
-                }
+                for (Player player : players)
+                    player.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + "Error: Cannot send Players to the Same Server");
             }
         }
     }

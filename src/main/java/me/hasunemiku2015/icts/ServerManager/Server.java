@@ -76,8 +76,9 @@ public class Server extends Thread {
                     String worldName = (String) trainConfig.get("world");
                     World world = Bukkit.getWorld(worldName);
 
+                    String trainID = (String) trainConfig.get("trainID");
                     String trainName = (String) trainConfig.get("trainName");
-                    List<String> players = (List<String>) trainConfig.get("players");
+                    List<String> passengers = (List<String>) trainConfig.get("passengers");
 
                     int x = (int) trainConfig.get("x");
                     int y = (int) trainConfig.get("y");
@@ -115,8 +116,10 @@ public class Server extends Thread {
                             }
 
                             // Add players to passengerList
-                            for (String uuid : players)
-                                Main.plugin.addPassenger(UUID.fromString(uuid), trainName);
+                            for (String passengerData : passengers) {
+                                String[] passenger = passengerData.split(";");
+                                Main.plugin.addPassenger(UUID.fromString(passenger[0]), passenger[1], Integer.parseInt(passenger[2]));
+                            }
 
                             // Get spawn-rail
                             Location railLoc = signBlock.getLocation();
@@ -132,16 +135,13 @@ public class Server extends Thread {
                             Main.plugin.getLogger().info("Location: " + x + " " + y + " " + z);
                             Main.plugin.getLogger().info("Direction: " + direction);
                             Main.plugin.getLogger().info("TrainName: " + trainName);
-                            Main.plugin.getLogger().info("Passengers: ");
-
-                            for (String uuid : players)
-                                Main.plugin.getLogger().info(uuid);
+                            Main.plugin.getLogger().info("Passengers: " + passengers.size());
 
                             // Spawn train
                             Main.plugin.getLogger().info("Try to spawn a train with " + train.getMembers().size() + " carts...");
 
                             MinecartGroup spawnedTrain = MinecartGroup.spawn(train, SignActionSpawn.getSpawnPositions(railLoc, true, direction, train.getMembers()));
-                            spawnedTrain.setProperties(spawnedTrain.getProperties().setName(trainName));
+                            spawnedTrain.setProperties(spawnedTrain.getProperties().setName(trainID));
                             System.out.println(spawnedTrain.getProperties().getTrainName());
                         }
                     });

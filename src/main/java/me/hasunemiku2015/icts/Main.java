@@ -36,7 +36,7 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
 
     //Players to be freezed
     public static List<String> players;
-    private Map<UUID, String> passengers = new TreeMap<UUID, String>();
+    private Map<UUID, HashMap<String, Object>> passengers = new HashMap<UUID, HashMap<String, Object>>();
 
     @Override
     public void onEnable() {
@@ -72,14 +72,15 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
         server.close();
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    /*@EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerSpawn(PlayerSpawnLocationEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
 
         if (!passengers.containsKey(uuid))
             return;
 
-        String trainName = passengers.get(uuid);
+        HashMap<String, Object> passenger = passengers.get(uuid);
+        String trainName = (String) passenger.get("trainName");
 
         for (MinecartGroup group : MinecartGroupStore.getGroups()) {
             TrainProperties trainProperties = group.getProperties();
@@ -90,35 +91,38 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
             plugin.getLogger().info(group.getProperties().getLocation().getLocation().toString());
             break;
         }
-    }
+    }*/
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
 
         if (!passengers.containsKey(uuid))
             return;
 
-        String trainName = passengers.get(uuid);
+        HashMap<String, Object> passenger = passengers.get(uuid);
+        String trainName = (String) passenger.get("trainName");
+        int cartIndex = (int) passenger.get("cartIndex");
 
         plugin.getLogger().info("Try to find train '" + trainName + "' for " + e.getPlayer().getName());
 
         for (MinecartGroup group : MinecartGroupStore.getGroups()) {
             TrainProperties trainProperties = group.getProperties();
-            if (!trainProperties.getTrainName().equals(trainName)) continue;
+            if (trainProperties.getTrainName().equals(trainName)) {
 
-            for (int i = 0; i < group.size(); i++) {
-                MinecartMember cart = group.get(i);
+                for (int i = 0; i < group.size(); i++) {
+                    MinecartMember cart = group.get(i);
 
-                if (cart instanceof MinecartMemberRideable && !cart.getEntity().hasPlayerPassenger()) {
-                    cart.getEntity().setPassenger(e.getPlayer());
-                    removePassenger(e.getPlayer().getUniqueId());
-                    plugin.getLogger().info("Sit down you silly prick!");
-                    break;
+                    if (cart instanceof MinecartMemberRideable && !cart.getEntity().hasPlayerPassenger() && i == cartIndex) {
+                        cart.getEntity().setPassenger(e.getPlayer());
+                        removePassenger(e.getPlayer().getUniqueId());
+                        plugin.getLogger().info("Sit down you silly prick!");
+                        break;
+                    }
                 }
-            }
 
-            break;
+                break;
+            }
         }
     }
 
@@ -136,11 +140,14 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
         }
     }
 
-    public void addPassenger(UUID uuid, String trainName) {
+    public void addPassenger(UUID uuid, String trainName, int cartIndex) {
         if (passengers.containsKey(uuid))
             passengers.remove(uuid);
 
-        passengers.put(uuid, trainName);
+        HashMap<String, Object> passenger = new HashMap<String, Object>();
+        passenger.put("trainName", trainName);
+        passenger.put("cartIndex", cartIndex);
+        passengers.put(uuid, passenger);
     }
 
     public void removePassenger(UUID uuid) {
