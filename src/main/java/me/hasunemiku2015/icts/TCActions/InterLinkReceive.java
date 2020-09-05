@@ -8,6 +8,7 @@ import com.bergerkiller.bukkit.tc.signactions.SignAction;
 import com.bergerkiller.bukkit.tc.signactions.SignActionType;
 import com.bergerkiller.bukkit.tc.signactions.spawner.SpawnSign;
 import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
+import me.hasunemiku2015.icts.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -22,6 +23,7 @@ public class InterLinkReceive extends SignAction {
 
     @Override
     public void execute(SignActionEvent event) {
+        /*
         if ((event.isAction(SignActionType.REDSTONE_ON) || event.isAction(SignActionType.REDSTONE_OFF)) && event.isPowered()) {
             Block b = event.getWorld().getBlockAt(event.getLocation().getBlockX(), event.getLocation().getBlockY() - 1, event.getLocation().getBlockZ());
             b.setBlockData(Bukkit.createBlockData(Material.LEVER, "[powered=false,face=wall,facing=" + event.getFacing().toString().toLowerCase() +"]"));
@@ -52,22 +54,20 @@ public class InterLinkReceive extends SignAction {
 
             } catch (Exception ignored) {
             }
-        }
+        }*/
     }
-
+    
     @Override
     public boolean build(SignChangeActionEvent info) {
-        Block b = info.getWorld().getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY() - 1, info.getLocation().getBlockZ());
+        Main.plugin.getLogger().info(info.getWatchedDirections().toString());
+        Main.plugin.getLogger().info(info.getAttachedBlock().getType().name());
+        Main.plugin.getLogger().info(info.getSign().getType().name());
 
-        if (b.getType().equals(Material.LEVER)) {
-            SignBuildOptions opt = SignBuildOptions.create()
-                    .setName("interlink inbound").setPermission(Permission.BUILD_TELEPORTER);
+        SignBuildOptions opt = SignBuildOptions.create()
+                .setName("interlink inbound").setPermission(Permission.BUILD_TELEPORTER);
 
-            opt.setDescription("receive trains \"teleported\" from other servers");
+        opt.setDescription("receive trains \"teleported\" from other servers");
 
-            return opt.handle(info.getPlayer());
-        } else {
-            return false;
-        }
+        return opt.handle(info.getPlayer());
     }
 }

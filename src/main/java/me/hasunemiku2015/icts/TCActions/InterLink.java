@@ -1,7 +1,9 @@
 package me.hasunemiku2015.icts.TCActions;
 
+import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.tc.Permission;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
+import com.bergerkiller.bukkit.tc.controller.type.MinecartMemberRideable;
 import com.bergerkiller.bukkit.tc.events.SignActionEvent;
 import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
@@ -27,9 +29,22 @@ public class InterLink extends SignAction {
     @Override
     public void execute(SignActionEvent event) {
         if (event.isAction(SignActionType.GROUP_ENTER) && event.isPowered()) {
+            ConfigurationNode train = event.getGroup().saveConfig();
 
-            List<String> playernames = new ArrayList<>();
             List<Player> players = new ArrayList<>();
+            List<String> playerNames = new ArrayList<>();
+
+            for (MinecartMember m : event.getMembers()) {
+                if (!(m instanceof MinecartMemberRideable))
+                    continue;
+
+                Entity entity = m.getEntity().getEntity().getPassenger();
+                if (entity instanceof Player) {
+                    Player player = (Player) entity;
+                    playerNames.add(player.getName());
+                    players.add(player);
+                }
+            }
 
             // line1: [!train]
 
@@ -45,44 +60,26 @@ public class InterLink extends SignAction {
             int y = (int) Double.parseDouble(coords[1]);
             int z = (int) Double.parseDouble(coords[2]);
 
-            for (MinecartMember m : event.getMembers()) {
-                Entity entity = m.getEntity().getEntity().getPassenger();
-                if (entity instanceof Player) {
-                    Player player = (Player) entity;
-
-                    players.add(player);
-                    playernames.add(player.getName());
-                } else {
-                    playernames.add("n");
-                }
-            }
+            ConfigurationNode packet = new ConfigurationNode();
+            packet.set("world", world);
+            packet.set("x", x);
+            packet.set("y", y);
+            packet.set("z", z);
+            packet.set("players", playerNames);
+            packet.set("train", train);
 
             event.getGroup().destroy();
 
             if (Integer.parseInt(server[1]) != Main.plugin.getConfig().getInt("port")) {
-                String raw = "InterLink;";
-
-                //Add Coordinates
-                String location = raw + x + "," + y + "," + z + "," + world;
-
-                //Add Passengers
-                StringBuilder passengers = new StringBuilder();
-                for (String passenger : playernames)
-                    passengers.append(passenger).append(",");
-
-                String output = location + ";" + passengers;
-
-                // Create connection and send output-string
                 Client client = new Client(Integer.parseInt(server[1]));
-                client.send(output);
+                client.send(packet.toString());
                 client.close();
 
-                // Connect players to other server
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
                     for (Player p : players) {
-                        Main.send(p, server[0]);
+                        Main.plugin.send(p, server[0]);
                     }
-                }, 5);
+                }, 5L);
             } else {
                 for (Player p : players){
                     p.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + "Error: Cannot send Players to the Same Server");
