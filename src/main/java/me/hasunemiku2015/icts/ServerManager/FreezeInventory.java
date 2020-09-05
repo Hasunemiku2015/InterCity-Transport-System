@@ -16,7 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class FreezeInventory implements Listener {
     //Inventory
-    private static Inventory inv;
+    public static Inventory inv;
 
     public FreezeInventory() {
         inv = Bukkit.createInventory(null, 9, ChatColor.DARK_RED + "InterLink Waiting Screen");
