@@ -21,7 +21,7 @@ public class InterLink extends SignAction {
 
     @Override
     public boolean match(SignActionEvent info) {
-        return info.isType("interlink");
+        return info.isType("iclink");
     }
 
     @Override
@@ -31,20 +31,19 @@ public class InterLink extends SignAction {
             List<String> playernames = new ArrayList<>();
             List<Player> players = new ArrayList<>();
 
-            //Send Player
+            // line1: [!train]
+
+            // line2: iclink worldname
+            String world = event.getLine(1).split(" ")[1];
+
+            // line3: servername;port
             String[] server = event.getLine(2).split(";");
 
-            String[] coors = event.getLine(3).split(" ");
-            int x = (int) Double.parseDouble(coors[0]);
-            int y = (int) Double.parseDouble(coors[1]);
-            int z = (int) Double.parseDouble(coors[2]);
-
-            String world = event.getSign().getWorld().getName();
-            try{
-                world = coors[4];
-            } catch (Exception ignored) {
-            }
-
+            // line4: x y z
+            String[] coords = event.getLine(3).split(" ");
+            int x = (int) Double.parseDouble(coords[0]);
+            int y = (int) Double.parseDouble(coords[1]);
+            int z = (int) Double.parseDouble(coords[2]);
 
             for (MinecartMember m : event.getMembers()) {
                 Entity entity = m.getEntity().getEntity().getPassenger();
@@ -61,9 +60,24 @@ public class InterLink extends SignAction {
             event.getGroup().destroy();
 
             if (Integer.parseInt(server[1]) != Main.plugin.getConfig().getInt("port")) {
-                Client export = new Client(Integer.parseInt(server[1]), x, y, z, world, playernames);
-                export.send();
+                String raw = "InterLink;";
 
+                //Add Coordinates
+                String location = raw + x + "," + y + "," + z + "," + world;
+
+                //Add Passengers
+                StringBuilder passengers = new StringBuilder();
+                for (String passenger : playernames)
+                    passengers.append(passenger).append(",");
+
+                String output = location + ";" + passengers;
+
+                // Create connection and send output-string
+                Client client = new Client(Integer.parseInt(server[1]));
+                client.send(output);
+                client.close();
+
+                // Connect players to other server
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
                     for (Player p : players) {
                         Main.send(p, server[0]);
