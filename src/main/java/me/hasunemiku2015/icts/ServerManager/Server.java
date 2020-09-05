@@ -3,6 +3,7 @@ package me.hasunemiku2015.icts.ServerManager;
 import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.spawnable.SpawnableGroup;
+import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import com.bergerkiller.bukkit.tc.signactions.SignActionSpawn;
 import me.hasunemiku2015.icts.Main;
 import org.bukkit.Bukkit;
@@ -24,6 +25,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class Server extends Thread {
     private ServerSocket serverSocket;
@@ -73,6 +75,8 @@ public class Server extends Thread {
 
                     String worldName = (String) trainConfig.get("world");
                     World world = Bukkit.getWorld(worldName);
+
+                    String trainName = (String) trainConfig.get("trainName");
                     List<String> players = (List<String>) trainConfig.get("players");
 
                     int x = (int) trainConfig.get("x");
@@ -110,17 +114,11 @@ public class Server extends Thread {
                                 return;
                             }
 
-                            // Spawn Train
+                            // Add players to passengerList
+                            for (String uuid : players)
+                                Main.plugin.addPassenger(UUID.fromString(uuid), trainName);
 
-                            Main.plugin.getLogger().info("World: " + world.getName());
-                            Main.plugin.getLogger().info("Location: " + x + " " + y + " " + z);
-                            Main.plugin.getLogger().info("Direction: " + direction);
-                            Main.plugin.getLogger().info("Passengers: ");
-
-                            for (String playerName : players) {
-                                Main.plugin.getLogger().info(playerName);
-                            }
-
+                            // Get spawn-rail
                             Location railLoc = signBlock.getLocation();
                             railLoc.setY(loc.getY() + 2);
 
@@ -129,14 +127,22 @@ public class Server extends Thread {
                                 return;
                             }
 
+                            // Debug
+                            Main.plugin.getLogger().info("World: " + world.getName());
+                            Main.plugin.getLogger().info("Location: " + x + " " + y + " " + z);
+                            Main.plugin.getLogger().info("Direction: " + direction);
+                            Main.plugin.getLogger().info("TrainName: " + trainName);
+                            Main.plugin.getLogger().info("Passengers: ");
+
+                            for (String uuid : players)
+                                Main.plugin.getLogger().info(uuid);
+
+                            // Spawn train
                             Main.plugin.getLogger().info("Try to spawn a train with " + train.getMembers().size() + " carts...");
 
                             MinecartGroup spawnedTrain = MinecartGroup.spawn(train, SignActionSpawn.getSpawnPositions(railLoc, true, direction, train.getMembers()));
-
+                            spawnedTrain.setProperties(spawnedTrain.getProperties().setName(trainName));
                             System.out.println(spawnedTrain.getProperties().getTrainName());
-
-
-                            // TODO: Add Passengers to spawned train
                         }
                     });
                 }

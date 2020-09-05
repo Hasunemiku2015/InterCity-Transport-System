@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class InterLink extends SignAction {
 
@@ -31,8 +32,8 @@ public class InterLink extends SignAction {
         if (event.isAction(SignActionType.GROUP_ENTER) && event.isPowered()) {
             ConfigurationNode train = event.getGroup().saveConfig();
 
-            List<Player> players = new ArrayList<>();
-            List<String> playerNames = new ArrayList<>();
+            List<Player> players = new ArrayList<Player>();
+            List<String> uuids = new ArrayList<String>();
 
             for (MinecartMember m : event.getMembers()) {
                 if (!(m instanceof MinecartMemberRideable))
@@ -41,8 +42,8 @@ public class InterLink extends SignAction {
                 Entity entity = m.getEntity().getEntity().getPassenger();
                 if (entity instanceof Player) {
                     Player player = (Player) entity;
-                    playerNames.add(player.getName());
                     players.add(player);
+                    uuids.add(player.getUniqueId().toString());
                 }
             }
 
@@ -65,7 +66,8 @@ public class InterLink extends SignAction {
             packet.set("x", x);
             packet.set("y", y);
             packet.set("z", z);
-            packet.set("players", playerNames);
+            packet.set("players", uuids);
+            packet.set("trainName", event.getGroup().getProperties().getTrainName());
             packet.set("train", train);
 
             event.getGroup().destroy();
