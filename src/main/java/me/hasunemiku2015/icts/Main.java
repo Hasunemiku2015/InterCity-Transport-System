@@ -20,6 +20,9 @@ import java.util.List;
 public class Main extends JavaPlugin implements PluginMessageListener {
     public static Main plugin;
 
+    // Socket Server
+    private Server server;
+
     //Players to be freezed
     public static List<String> players;
 
@@ -29,7 +32,7 @@ public class Main extends JavaPlugin implements PluginMessageListener {
         players = new ArrayList<>();
 
         //Create Server Socket
-        Server server = new Server();
+        server = new Server();
         server.start();
 
         //Load Config
@@ -54,6 +57,7 @@ public class Main extends JavaPlugin implements PluginMessageListener {
     @Override
     public void onDisable() {
         SignToggler.deinit();
+        server.close();
     }
 
 
