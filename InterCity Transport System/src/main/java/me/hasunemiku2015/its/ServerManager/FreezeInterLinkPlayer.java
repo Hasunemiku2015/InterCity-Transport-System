@@ -16,4 +16,18 @@ public class FreezeInterLinkPlayer implements Listener {
             new FreezeInventory().freeze(e.getPlayer());
         }
     }
+    
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onInventoryClose(final InventoryCloseEvent e){
+        if (e.getInventory().equals(FreezeInventory.inv)){
+            Bukkit.getServer().getScheduler().runTask(Main.plugin,() -> {
+                if(e.getPlayer().isInsideVehicle()){
+                    if(e.getPlayer().getVehicle() instanceof Minecart){
+                        return;
+                    }
+                }
+                e.getPlayer().openInventory(FreezeInventory.inv);
+            });
+        }
+    }
 }
