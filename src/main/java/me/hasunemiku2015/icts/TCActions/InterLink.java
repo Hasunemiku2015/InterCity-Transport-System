@@ -34,7 +34,7 @@ public class InterLink extends SignAction {
             Set<ConfigurationNode> nodes = train.getNode("carts").getNodes();
             for (ConfigurationNode cart : nodes) {
                 if (cart.contains("lastPathNode"))
-                    cart.set("lastPathNode", null);
+                    cart.set("lastPathNode", "");
             }
 
             String trainName = Main.plugin.getConfig().getString("serverName") + "-" + event.getGroup().getProperties().getTrainName();
@@ -54,7 +54,6 @@ public class InterLink extends SignAction {
                     Player player = (Player) entity;
                     passengers.add(player.getUniqueId() + ";" + trainID + ";" + i);
                     players.add(player);
-                    break;
                 }
             }
 

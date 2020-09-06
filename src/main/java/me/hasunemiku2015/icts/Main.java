@@ -128,7 +128,9 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
                     if (player.isFlying())
                         player.setFlying(false);
 
+                    e.setSpawnLocation(cart.getBlock().getLocation());
                     cart.getEntity().setPassenger(player);
+
                     plugin.getLogger().info("Set player " + player.getName() + " as passenger of '" + trainName + "' at cartIndex: " + cartIndex);
                     removePassenger(uuid);
                     return;
