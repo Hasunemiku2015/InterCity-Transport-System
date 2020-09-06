@@ -15,6 +15,7 @@ import me.hasunemiku2015.icts.ServerManager.FreezeInventory;
 import me.hasunemiku2015.icts.ServerManager.Server;
 import me.hasunemiku2015.icts.TCActions.SignToggler;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -72,7 +73,7 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
         server.close();
     }
 
-    /*@EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerSpawn(PlayerSpawnLocationEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
 
@@ -86,14 +87,15 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
             TrainProperties trainProperties = group.getProperties();
             if (!trainProperties.getTrainName().equals(trainName)) continue;
 
-            e.setSpawnLocation(group.getProperties().getLocation().getLocation());
+            Location spawnLoc = group.get(0).getBlock().getLocation();
+            e.setSpawnLocation(spawnLoc);
             plugin.getLogger().info("Spawn player " + e.getPlayer().getName() + " at ");
-            plugin.getLogger().info(group.getProperties().getLocation().getLocation().toString());
+            plugin.getLogger().info(spawnLoc.toString());
             break;
         }
-    }*/
+    }
 
-    @EventHandler
+    @EventHandler(priority=EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
 
@@ -109,19 +111,12 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
         for (MinecartGroup group : MinecartGroupStore.getGroups()) {
             TrainProperties trainProperties = group.getProperties();
             if (trainProperties.getTrainName().equals(trainName)) {
-
-                for (int i = 0; i < group.size(); i++) {
-                    MinecartMember cart = group.get(i);
-
-                    if (cart instanceof MinecartMemberRideable && !cart.getEntity().hasPlayerPassenger() && i == cartIndex) {
-                        cart.getEntity().setPassenger(e.getPlayer());
-                        removePassenger(e.getPlayer().getUniqueId());
-                        plugin.getLogger().info("Sit down you silly prick!");
-                        break;
-                    }
+                MinecartMember cart = group.get(cartIndex);
+                if (cart != null && (cart instanceof MinecartMemberRideable) && !cart.getEntity().hasPlayerPassenger()) {
+                    cart.getEntity().setPassenger(e.getPlayer());
+                    removePassenger(e.getPlayer().getUniqueId());
+                    break;
                 }
-
-                break;
             }
         }
     }
