@@ -4,6 +4,7 @@ import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.spawnable.SpawnableGroup;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
+import com.bergerkiller.bukkit.tc.properties.TrainPropertiesStore;
 import com.bergerkiller.bukkit.tc.signactions.SignActionSpawn;
 import me.hasunemiku2015.icts.Main;
 import org.bukkit.Bukkit;
@@ -22,10 +23,7 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 
 public class Server extends Thread {
     private ServerSocket serverSocket;
@@ -79,6 +77,7 @@ public class Server extends Thread {
                     String trainID = (String) trainConfig.get("trainID");
                     String trainName = (String) trainConfig.get("trainName");
                     List<String> passengers = (List<String>) trainConfig.get("passengers");
+                    List<String> owners = (List<String>) trainConfig.get("trainOwners");
 
                     int x = (int) trainConfig.get("x");
                     int y = (int) trainConfig.get("y");
@@ -135,13 +134,20 @@ public class Server extends Thread {
                             Main.plugin.getLogger().info("Location: " + x + " " + y + " " + z);
                             Main.plugin.getLogger().info("Direction: " + direction);
                             Main.plugin.getLogger().info("TrainName: " + trainName);
+                            Main.plugin.getLogger().info("Owners: " + owners.toString());
                             Main.plugin.getLogger().info("Passengers: " + passengers.size());
 
                             // Spawn train
                             Main.plugin.getLogger().info("Try to spawn a train with " + train.getMembers().size() + " carts...");
 
                             MinecartGroup spawnedTrain = MinecartGroup.spawn(train, SignActionSpawn.getSpawnPositions(railLoc, false, direction, train.getMembers()));
-                            spawnedTrain.setProperties(spawnedTrain.getProperties().setName(trainID));
+                            spawnedTrain.getProperties().setName(trainID);
+
+                            for (String owner : owners) {
+                                Main.plugin.getLogger().info("Add owner '" + owner + "' to '" + trainID + "'");
+                                spawnedTrain.getProperties().getOwners().add(owner);
+                            }
+
                             System.out.println(spawnedTrain.getProperties().getTrainName());
                         }
                     });

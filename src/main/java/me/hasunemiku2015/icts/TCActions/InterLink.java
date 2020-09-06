@@ -30,6 +30,7 @@ public class InterLink extends SignAction {
     public void execute(SignActionEvent event) {
         if (event.isAction(SignActionType.GROUP_ENTER) && event.isPowered()) {
             ConfigurationNode train = event.getGroup().saveConfig();
+            Set<String> owners = event.getGroup().getProperties().getOwners();
 
             Set<ConfigurationNode> nodes = train.getNode("carts").getNodes();
             for (ConfigurationNode cart : nodes) {
@@ -79,6 +80,7 @@ public class InterLink extends SignAction {
             packet.set("passengers", passengers);
             packet.set("trainID", trainID);
             packet.set("trainName", trainName);
+            packet.set("trainOwners", owners);
             packet.set("train", train);
 
             event.getGroup().destroy();
