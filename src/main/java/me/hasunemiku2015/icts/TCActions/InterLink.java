@@ -31,6 +31,12 @@ public class InterLink extends SignAction {
         if (event.isAction(SignActionType.GROUP_ENTER) && event.isPowered()) {
             ConfigurationNode train = event.getGroup().saveConfig();
 
+            Set<ConfigurationNode> nodes = train.getNode("carts").getNodes();
+            for (ConfigurationNode cart : nodes) {
+                if (cart.contains("lastPathNode"))
+                    cart.set("lastPathNode", null);
+            }
+
             String trainName = Main.plugin.getConfig().getString("serverName") + "-" + event.getGroup().getProperties().getTrainName();
             List<String> passengers = new ArrayList<String>();
             List<Player> players = new ArrayList<Player>();
