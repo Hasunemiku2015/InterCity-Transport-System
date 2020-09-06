@@ -54,6 +54,7 @@ public class InterLink extends SignAction {
                     Player player = (Player) entity;
                     passengers.add(player.getUniqueId() + ";" + trainID + ";" + i);
                     players.add(player);
+                    break;
                 }
             }
 
