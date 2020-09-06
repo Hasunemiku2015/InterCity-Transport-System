@@ -72,7 +72,7 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
         SignToggler.deinit();
         server.close();
     }
-
+/*
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerSpawn(PlayerSpawnLocationEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
@@ -83,39 +83,55 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
         HashMap<String, Object> passenger = passengers.get(uuid);
         String trainName = (String) passenger.get("trainName");
 
+        plugin.getLogger().info("Try to find position of train '" + trainName + "' to spawn " + e.getPlayer().getName());
+
         for (MinecartGroup group : MinecartGroupStore.getGroups()) {
             TrainProperties trainProperties = group.getProperties();
-            if (!trainProperties.getTrainName().equals(trainName)) continue;
+            if (trainProperties.getTrainName().equals(trainName)) {
+                Player player = e.getPlayer();
+                Location spawnLoc = group.get(0).getBlock().getLocation();
 
-            Location spawnLoc = group.get(0).getBlock().getLocation();
-            e.setSpawnLocation(spawnLoc);
-            plugin.getLogger().info("Spawn player " + e.getPlayer().getName() + " at ");
-            plugin.getLogger().info(spawnLoc.toString());
-            break;
+                if (player.isFlying())
+                    player.setFlying(false);
+
+                e.setSpawnLocation(spawnLoc);
+                plugin.getLogger().info("Spawn player " + player.getName() + " at ");
+                plugin.getLogger().info(spawnLoc.toString());
+                return;
+            }
         }
-    }
 
-    @EventHandler(priority=EventPriority.MONITOR)
-    public void onPlayerJoin(PlayerJoinEvent e) {
+        plugin.getLogger().info("Train '" + trainName + "' not found.");
+    }*/
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerSpawn(PlayerSpawnLocationEvent e) {
+        plugin.getLogger().info("SPAWNEVENT");
         UUID uuid = e.getPlayer().getUniqueId();
 
         if (!passengers.containsKey(uuid))
             return;
 
+        Player player = e.getPlayer();
+
         HashMap<String, Object> passenger = passengers.get(uuid);
         String trainName = (String) passenger.get("trainName");
         int cartIndex = (int) passenger.get("cartIndex");
 
-        plugin.getLogger().info("Try to find train '" + trainName + "' for " + e.getPlayer().getName());
+        plugin.getLogger().info("Try to find train '" + trainName + "' for " + player.getName() + " cartIndex: " + cartIndex);
 
         for (MinecartGroup group : MinecartGroupStore.getGroups()) {
             TrainProperties trainProperties = group.getProperties();
             if (trainProperties.getTrainName().equals(trainName)) {
                 MinecartMember cart = group.get(cartIndex);
-                if (cart != null && (cart instanceof MinecartMemberRideable) && !cart.getEntity().hasPlayerPassenger()) {
-                    cart.getEntity().setPassenger(e.getPlayer());
-                    removePassenger(e.getPlayer().getUniqueId());
-                    break;
+                if (cart != null && (cart instanceof MinecartMemberRideable) && passengers.containsKey(uuid)) {
+                    if (player.isFlying())
+                        player.setFlying(false);
+
+                    cart.getEntity().setPassenger(player);
+                    plugin.getLogger().info("Set player " + player.getName() + " as passenger of '" + trainName + "' at cartIndex: " + cartIndex);
+                    removePassenger(uuid);
+                    return;
                 }
             }
         }
