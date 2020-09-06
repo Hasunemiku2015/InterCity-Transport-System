@@ -104,7 +104,7 @@ public class Server extends Thread {
                                 if (data instanceof Rotatable)
                                 {
                                     Rotatable rotation = (Rotatable) data;
-                                    direction = rotation.getRotation().getOppositeFace();
+                                    direction = rotation.getRotation();
                                 }
                                 else {
                                     Main.plugin.getLogger().warning("No Rotation found!!");
@@ -140,7 +140,7 @@ public class Server extends Thread {
                             // Spawn train
                             Main.plugin.getLogger().info("Try to spawn a train with " + train.getMembers().size() + " carts...");
 
-                            MinecartGroup spawnedTrain = MinecartGroup.spawn(train, SignActionSpawn.getSpawnPositions(railLoc, true, direction, train.getMembers()));
+                            MinecartGroup spawnedTrain = MinecartGroup.spawn(train, SignActionSpawn.getSpawnPositions(railLoc, false, direction, train.getMembers()));
                             spawnedTrain.setProperties(spawnedTrain.getProperties().setName(trainID));
                             System.out.println(spawnedTrain.getProperties().getTrainName());
                         }
