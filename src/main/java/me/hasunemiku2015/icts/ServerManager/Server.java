@@ -72,96 +72,99 @@ public class Server extends Thread {
 
                     ConfigurationNode trainConfig = new ConfigurationNode();
                     trainConfig.loadFromString(received.toString());
+                    
+                    //Whitelist Check
+                    if (Main.whitelist.contains(ipSender) || !Main.plugin.getConfig().getBoolean("whitelist.enabled")) {
+                        String worldName = (String) trainConfig.get("world");
+                        World world = Bukkit.getWorld(worldName);
 
-                    String worldName = (String) trainConfig.get("world");
-                    World world = Bukkit.getWorld(worldName);
+                        String trainID = (String) trainConfig.get("trainID");
+                        String trainName = (String) trainConfig.get("trainName");
+                        List<String> passengers = (List<String>) trainConfig.get("passengers");
+                        List<String> owners = (List<String>) trainConfig.get("trainOwners");
 
-                    String trainID = (String) trainConfig.get("trainID");
-                    String trainName = (String) trainConfig.get("trainName");
-                    List<String> passengers = (List<String>) trainConfig.get("passengers");
-                    List<String> owners = (List<String>) trainConfig.get("trainOwners");
+                        int x = (int) trainConfig.get("x");
+                        int y = (int) trainConfig.get("y");
+                        int z = (int) trainConfig.get("z");
 
-                    int x = (int) trainConfig.get("x");
-                    int y = (int) trainConfig.get("y");
-                    int z = (int) trainConfig.get("z");
+                        if (world == null) {
+                            Main.plugin.getLogger().warning("World '" + worldName + "' was not found!");
+                            return;
+                        }
 
-                    if (world == null) {
-                        Main.plugin.getLogger().warning("World '" + worldName + "' was not found!");
-                        return;
-                    }
+                        Location loc = new Location(world, x, y, z);
+                        SpawnableGroup train = SpawnableGroup.fromConfig((ConfigurationNode) trainConfig.get("train"));
 
-                    Location loc = new Location(world, x, y, z);
-                    SpawnableGroup train = SpawnableGroup.fromConfig((ConfigurationNode) trainConfig.get("train"));
+                        Bukkit.getServer().getScheduler().runTask(Main.plugin, new Runnable() {
+                            @Override
+                            public void run() {
+                                Block signBlock = loc.getBlock();
+                                BlockFace direction = null;
 
-                    Bukkit.getServer().getScheduler().runTask(Main.plugin, new Runnable() {
-                        @Override
-                        public void run() {
-                            Block signBlock = loc.getBlock();
-                            BlockFace direction = null;
-
-                            if (signBlock instanceof Sign)
-                            {
-                                BlockData data = signBlock.getState().getBlockData();
-
-                                if (data instanceof Rotatable)
+                                if (signBlock instanceof Sign)
                                 {
-                                    Rotatable rotation = (Rotatable) data;
-                                    direction = rotation.getRotation();
+                                    BlockData data = signBlock.getState().getBlockData();
+
+                                    if (data instanceof Rotatable)
+                                    {
+                                        Rotatable rotation = (Rotatable) data;
+                                        direction = rotation.getRotation();
+                                    }
+                                    else    {
+                                        Main.plugin.getLogger().warning("No Rotation found!!");
+                                    }
                                 }
                                 else {
-                                    Main.plugin.getLogger().warning("No Rotation found!!");
+                                    Main.plugin.getLogger().warning("No Sign found!!");
+                                    return;
                                 }
+
+                                // Add players to passengerList
+                                for (String passengerData : passengers) {
+                                    String[] passenger = passengerData.split(";");
+                                    Main.plugin.addPassenger(UUID.fromString(passenger[0]), passenger[1], Integer.parseInt(passenger[2]));
+                                }
+
+                                // Get spawn-rail
+                                Location railLoc = signBlock.getLocation();
+                                railLoc.setY(loc.getY() + 2);
+
+                                if (!railLoc.getBlock().getType().equals(Material.RAIL)) {
+                                    Main.plugin.getLogger().warning("No Rail found!! (" + railLoc.getBlock().getType().name() + ")");
+                                    return;
+                                }
+
+                                // Debug
+                                Main.plugin.getLogger().info("World: " + world.getName());
+                                Main.plugin.getLogger().info("Location: " + x + " " + y + " " + z);
+                                Main.plugin.getLogger().info("Direction: " + direction);
+                                Main.plugin.getLogger().info("TrainName: " + trainName);
+                                Main.plugin.getLogger().info("Owners: " + owners.toString());
+                                Main.plugin.getLogger().info("Passengers: " + passengers.size());
+
+                                // Spawn train
+                                Main.plugin.getLogger().info("Try to spawn a train with " + train.getMembers().size() + " carts...");
+
+                                MinecartGroup spawnedTrain = MinecartGroup.spawn(train, SignActionSpawn.getSpawnPositions(railLoc, false, direction, train.getMembers()));
+                                spawnedTrain.getProperties().setName(trainID);
+
+                                for (CartProperties cartProp : spawnedTrain.getProperties())
+                                    cartProp.getOwners().addAll(owners);
+
+                                System.out.println(spawnedTrain.getProperties().getTrainName());
                             }
-                            else {
-                                Main.plugin.getLogger().warning("No Sign found!!");
-                                return;
-                            }
+                        });
+                    }
 
-                            // Add players to passengerList
-                            for (String passengerData : passengers) {
-                                String[] passenger = passengerData.split(";");
-                                Main.plugin.addPassenger(UUID.fromString(passenger[0]), passenger[1], Integer.parseInt(passenger[2]));
-                            }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
 
-                            // Get spawn-rail
-                            Location railLoc = signBlock.getLocation();
-                            railLoc.setY(loc.getY() + 2);
-
-                            if (!railLoc.getBlock().getType().equals(Material.RAIL)) {
-                                Main.plugin.getLogger().warning("No Rail found!! (" + railLoc.getBlock().getType().name() + ")");
-                                return;
-                            }
-
-                            // Debug
-                            Main.plugin.getLogger().info("World: " + world.getName());
-                            Main.plugin.getLogger().info("Location: " + x + " " + y + " " + z);
-                            Main.plugin.getLogger().info("Direction: " + direction);
-                            Main.plugin.getLogger().info("TrainName: " + trainName);
-                            Main.plugin.getLogger().info("Owners: " + owners.toString());
-                            Main.plugin.getLogger().info("Passengers: " + passengers.size());
-
-                            // Spawn train
-                            Main.plugin.getLogger().info("Try to spawn a train with " + train.getMembers().size() + " carts...");
-
-                            MinecartGroup spawnedTrain = MinecartGroup.spawn(train, SignActionSpawn.getSpawnPositions(railLoc, false, direction, train.getMembers()));
-                            spawnedTrain.getProperties().setName(trainID);
-
-                            for (CartProperties cartProp : spawnedTrain.getProperties())
-                                cartProp.getOwners().addAll(owners);
-
-                            System.out.println(spawnedTrain.getProperties().getTrainName());
-                        }
-                    });
+                    Main.plugin.getLogger().info("Closing connection.");
+                    reader.close();
+                    clients.remove(connection);
+                    connection.close();
                 }
-
-                catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-
-                Main.plugin.getLogger().info("Closing connection.");
-                reader.close();
-                clients.remove(connection);
-                connection.close();
             }
         } catch (BindException e) {
             Main.plugin.getLogger().warning("Can't bind to " + port + ".. Port already in use!");
