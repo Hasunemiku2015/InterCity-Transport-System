@@ -184,12 +184,15 @@ public class Server extends Thread {
                             }
 
                             if (ICTS.config.isDebugEnabled()) {
+                                StringBuilder ownerList = new StringBuilder();
+                                for (String owner : owners) ownerList.append(owner + ",");
+
                                 ICTS.plugin.getLogger().info("World: " + world.getName());
                                 ICTS.plugin.getLogger().info("Location: " + x + " " + y + " " + z);
                                 ICTS.plugin.getLogger().info("Direction: " + direction);
                                 ICTS.plugin.getLogger().info("TrainName: " + trainID);
                                 ICTS.plugin.getLogger().info("TrainName(New): " + trainNewName);
-                                ICTS.plugin.getLogger().info("Owners: " + owners.toString());
+                                ICTS.plugin.getLogger().info("Owners: " + ownerList.toString());
                                 ICTS.plugin.getLogger().info("Passengers: " + passengers.size());
                                 ICTS.plugin.getLogger().info("Try to spawn a train with " + train.getMembers().size() + " carts...");
                             }

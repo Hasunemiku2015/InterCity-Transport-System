@@ -51,6 +51,10 @@ public class PlayerSpawnListener implements Listener {
                 ICTS.plugin.getLogger().info("Set player " + player.getName() + " as passenger of '" + trainName + "' at cartIndex: " + cartIndex);
                 Passenger.remove(uuid);
             }
+            else
+                ICTS.plugin.getLogger().warning("Cart(" + cartIndex + ") at Train '" + trainName + "' is not rideable.");
         }
+        else
+            ICTS.plugin.getLogger().warning("Train '" + trainName + "' was not found.");
     }
 }
