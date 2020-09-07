@@ -8,6 +8,7 @@ import me.hasunemiku2015.icts.listener.PlayerSpawnListener;
 import me.hasunemiku2015.icts.net.Client;
 import me.hasunemiku2015.icts.net.Server;
 import me.hasunemiku2015.icts.tc.SignToggler;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -72,6 +73,10 @@ public class ICTS extends JavaPlugin implements Listener {
         }
 
         return null;
+    }
+
+    public String formatMsg(String message) {
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 }
 

@@ -13,10 +13,18 @@ public class Config {
 
     // Whitelist
     private boolean whitelistEnabled;
-    private Collection<String> whitelist;
+    private boolean blacklistEnabled;
+    private Collection<String> ipWhitelist;
+    private  Collection<String> worldBlacklist;
+    private Collection<String> serverBlacklist;
+    private Collection<Integer> portBlacklist;
 
     // Messages
-    private String prefix;
+    private String prefix = "";
+    private String sameServerMessage;
+    private String blacklistedWorldMessage;
+    private String blacklistedServerMessage;
+    private String blacklistedPortMessage;
     private String noWorldMessage;
     private String noSignMessage;
     private String noRotationMessage;
@@ -31,9 +39,17 @@ public class Config {
         debugEnabled = config.getBoolean("debug");
 
         whitelistEnabled = config.getBoolean("whitelist.enabled");
-        whitelist = config.getStringList("whitelist.ip");
+        blacklistEnabled = config.getBoolean("whitelist.enabled");
+        ipWhitelist = config.getStringList("whitelist.ip");
+        worldBlacklist = config.getStringList("blacklist.worlds");
+        serverBlacklist = config.getStringList("blacklist.server");
+        portBlacklist = config.getIntegerList("blacklist.ports");
 
         prefix = config.getString("messages.prefix");
+        sameServerMessage = config.getString("messages.sameServer");
+        blacklistedWorldMessage = config.getString("messages.blacklistedWorld");
+        blacklistedServerMessage = config.getString("messages.blacklistedServer");
+        blacklistedPortMessage = config.getString("messages.blacklistedPort");
         noWorldMessage = config.getString("messages.noWorld");
         noSignMessage = config.getString("messages.noSign");
         noRotationMessage = config.getString("messages.noRotation");
@@ -53,11 +69,27 @@ public class Config {
     public boolean isWhitelistEnabled() {
         return whitelistEnabled;
     }
-    public Collection<String> getWhitelist() {
-        return whitelist;
+    public boolean isBlacklistEnabled() {
+        return blacklistEnabled;
+    }
+    public Collection<String> getIPWhitelist() {
+        return ipWhitelist;
+    }
+    public Collection<String> getWorldBlacklist() {
+        return worldBlacklist;
+    }
+    public Collection<String> getServerBlacklist() {
+        return serverBlacklist;
+    }
+    public Collection<Integer> getPortBlacklist() {
+        return portBlacklist;
     }
 
     public String getPrefix() { return prefix; }
+    public String getSameServerMessage() { return sameServerMessage; }
+    public String getBlacklistedWorldMessage() { return blacklistedWorldMessage; }
+    public String getBlacklistedServerMessage() { return blacklistedServerMessage; }
+    public String getBlacklistedPortMessage() { return blacklistedPortMessage; }
     public String getNoWorldMessage() { return noWorldMessage; }
     public String getNoSignMessage() { return noSignMessage; }
     public String getNoRotationMessage() { return noRotationMessage; }

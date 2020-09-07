@@ -5,17 +5,32 @@ port: 5000
 # Server Name
 serverName: "server1"
 
-# Whitelist
+# Whitelist (IP's only)
 whitelist:
   enabled: true
   ip:
     - 127.0.0.1
 
+blacklist:
+  enabled: false
+  worlds:
+    - survival1
+    - survival2
+  server:
+    - server1
+    - server2
+  ports:
+    - 1337
+
 messages:
   prefix: "&a[&eICTS&a]&r: "
-  noWorld: "&cCouldn't find a world called &e%world%."
-  noSign: "&cCouldn't find a &e'&aicreceive&e'&c-sign &cat: &e%x% %y% %z%"
-  noRotation: "&cUnable to retrieve rotation-data from &e'&aicreceive&e'&c-sign."
-  noRail: "&cCouln't find any rail above the &e'&aicreceive&e'&c-sign."
+  sameServer: "&c&lError: &cCannot send players to the same server."
+  blacklistedWorld: "&c&lError: &cCannot send players to a blacklisted world."
+  blacklistedServer: "&c&lError: &cCannot send players to a blacklisted server."
+  blacklistedPort: "&c&lError: &cCannot send data to a blacklisted port."
+  noWorld: "&c&lError: &cCouldn't find a world called &e%world%."
+  noSign: "&c&lError: &cCouldn't find a &e'&aicreceive&e'&c-sign &cat: &e%x% %y% %z%"
+  noRotation: "&c&lError: &cUnable to retrieve rotation-data from &e'&aicreceive&e'&c-sign."
+  noRail: "&c&lError: &cCouln't find any rail above the &e'&aicreceive&e'&c-sign."
 
 debug: false

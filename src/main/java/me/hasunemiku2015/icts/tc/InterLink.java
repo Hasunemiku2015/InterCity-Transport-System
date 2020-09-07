@@ -66,7 +66,7 @@ public class InterLink extends SignAction {
             // line1: [!train]
 
             // line2: iclink worldname
-            String world = event.getLine(1).split(" ")[1];
+            String worldName = event.getLine(1).split(" ")[1];
 
             // line3: servername;port
             String[] serverInfo = event.getLine(2).split(";");
@@ -81,7 +81,7 @@ public class InterLink extends SignAction {
 
             // Use ConfigurationNode to store informations
             ConfigurationNode dataPacket = new ConfigurationNode();
-            dataPacket.set("target.world", world);
+            dataPacket.set("target.world", worldName);
             dataPacket.set("target.x", x);
             dataPacket.set("target.y", y);
             dataPacket.set("target.z", z);
@@ -94,8 +94,27 @@ public class InterLink extends SignAction {
             // Destroy train
             event.getGroup().destroy();
 
-            if (port != ICTS.config.getPort()) {
+            if (ICTS.config.isBlacklistEnabled() && ICTS.config.getWorldBlacklist().contains(worldName)) {
+                for (Player player : players)
+                    player.sendMessage(ICTS.plugin.formatMsg(ICTS.config.getBlacklistedWorldMessage().replace("%world%", worldName)));
+            }
 
+            else if (ICTS.config.isBlacklistEnabled() && ICTS.config.getServerBlacklist().contains(serverName)) {
+                for (Player player : players)
+                    player.sendMessage(ICTS.plugin.formatMsg(ICTS.config.getBlacklistedServerMessage().replace("%server%", serverName)));
+            }
+
+            else if (ICTS.config.isBlacklistEnabled() && ICTS.config.getPortBlacklist().contains(port)) {
+                for (Player player : players)
+                    player.sendMessage(ICTS.plugin.formatMsg(ICTS.config.getBlacklistedPortMessage().replace("%port%", String.valueOf(port))));
+            }
+
+            else if (port == ICTS.config.getPort() || ICTS.config.getServerName().equals(serverName)) {
+                for (Player player : players)
+                    player.sendMessage(ICTS.plugin.formatMsg(ICTS.config.getSameServerMessage().replace("%server%", serverName)));
+            }
+
+            else {
                 // Send dataPacket and players to other server
                 Bukkit.getScheduler().runTaskAsynchronously(ICTS.plugin, new Runnable() {
                     @Override
@@ -113,10 +132,6 @@ public class InterLink extends SignAction {
                         }, 5L);
                     }
                 });
-
-            } else {
-                for (Player player : players)
-                    player.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + "Error: Cannot send Players to the Same Server");
             }
         }
     }

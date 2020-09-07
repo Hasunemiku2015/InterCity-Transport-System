@@ -72,7 +72,7 @@ public class Server extends Thread {
 
                 // Whitelist Check
                 String ip = connection.getInetAddress().getHostAddress();
-                if (ICTS.config.isWhitelistEnabled() && !ICTS.config.getWhitelist().contains(ip)) {
+                if (ICTS.config.isWhitelistEnabled() && !ICTS.config.getIPWhitelist().contains(ip)) {
                     ICTS.plugin.getLogger().warning(ip + " tried to connect but is not whitelisted!");
 
                     connection.close();
