@@ -65,7 +65,15 @@ public class InterLink extends SignAction {
             String world = event.getLine(1).split(" ")[1];
 
             // line3: servername;port
+<<<<<<< Updated upstream:src/main/java/me/hasunemiku2015/icts/TCActions/InterLink.java
             String[] server = event.getLine(2).split(";");
+=======
+            String[] serverInfo = event.getLine(2).split(";");
+            String serverName = serverInfo[0];
+            String[] ip_port = serverInfo[1].split(":");
+            String ip = ip_port[0];
+            int port = Integer.parseInt(ip_port[1]);
+>>>>>>> Stashed changes:src/main/java/me/hasunemiku2015/icts/tc/InterLink.java
 
             // line4: x y z
             String[] coords = event.getLine(3).split(" ");
@@ -94,9 +102,23 @@ public class InterLink extends SignAction {
 
             event.getGroup().destroy();
 
+<<<<<<< Updated upstream:src/main/java/me/hasunemiku2015/icts/TCActions/InterLink.java
             String[] ip_port = server[1].split(":");
             String dest = ip_port[0];
             int port = Integer.parseInt(ip_port[1]);
+=======
+            if (port != ICTS.config.getPort()) {
+
+                // Send dataPacket and players to other server
+                Bukkit.getScheduler().runTaskAsynchronously(ICTS.plugin, () -> {
+                    Client client = new Client(ip,port);
+                    client.send(dataPacket.toString()); // Serialize ConfigurationNode
+                    client.close();
+
+                    for (Player player : players)
+                        ICTS.plugin.sendToServer(player, serverName);
+                });
+>>>>>>> Stashed changes:src/main/java/me/hasunemiku2015/icts/tc/InterLink.java
 
             String lhcheck;
             if(dest.equalsIgnoreCase("localhost")){
