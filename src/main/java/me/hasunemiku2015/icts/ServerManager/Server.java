@@ -4,8 +4,6 @@ import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.spawnable.SpawnableGroup;
 import com.bergerkiller.bukkit.tc.properties.CartProperties;
-import com.bergerkiller.bukkit.tc.properties.TrainProperties;
-import com.bergerkiller.bukkit.tc.properties.TrainPropertiesStore;
 import com.bergerkiller.bukkit.tc.signactions.SignActionSpawn;
 import me.hasunemiku2015.icts.Main;
 import org.bukkit.Bukkit;
@@ -17,14 +15,17 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Rotatable;
-import org.yaml.snakeyaml.scanner.ScannerException;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class Server extends Thread {
     private ServerSocket serverSocket;
@@ -34,7 +35,7 @@ public class Server extends Thread {
 
     @Override
     public void run() {
-        clients = new ArrayList<Socket>();
+        clients = new ArrayList<>();
         int port = Main.plugin.getConfig().getInt("port");
 
         try {
@@ -84,8 +85,9 @@ public class Server extends Thread {
                     int y = (int) trainConfig.get("y");
                     int z = (int) trainConfig.get("z");
 
-                    if (worldName == null || world == null) {
+                    if (world == null) {
                         Main.plugin.getLogger().warning("World '" + worldName + "' was not found!");
+                        return;
                     }
 
                     Location loc = new Location(world, x, y, z);
@@ -97,7 +99,7 @@ public class Server extends Thread {
                             Block signBlock = loc.getBlock();
                             BlockFace direction = null;
 
-                            if (signBlock != null && signBlock.getState() instanceof Sign)
+                            if (signBlock instanceof Sign)
                             {
                                 BlockData data = signBlock.getState().getBlockData();
 
