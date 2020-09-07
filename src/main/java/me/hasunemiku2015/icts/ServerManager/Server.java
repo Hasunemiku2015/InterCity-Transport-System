@@ -3,6 +3,7 @@ package me.hasunemiku2015.icts.ServerManager;
 import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.spawnable.SpawnableGroup;
+import com.bergerkiller.bukkit.tc.properties.CartProperties;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import com.bergerkiller.bukkit.tc.properties.TrainPropertiesStore;
 import com.bergerkiller.bukkit.tc.signactions.SignActionSpawn;
@@ -143,10 +144,8 @@ public class Server extends Thread {
                             MinecartGroup spawnedTrain = MinecartGroup.spawn(train, SignActionSpawn.getSpawnPositions(railLoc, false, direction, train.getMembers()));
                             spawnedTrain.getProperties().setName(trainID);
 
-                            for (String owner : owners) {
-                                Main.plugin.getLogger().info("Add owner '" + owner + "' to '" + trainID + "'");
-                                spawnedTrain.getProperties().getOwners().add(owner);
-                            }
+                            for (CartProperties cartProp : spawnedTrain.getProperties())
+                                cartProp.getOwners().addAll(owners);
 
                             System.out.println(spawnedTrain.getProperties().getTrainName());
                         }
