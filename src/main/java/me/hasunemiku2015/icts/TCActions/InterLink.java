@@ -17,6 +17,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.net.InetAddress;
 import java.util.*;
 
 public class InterLink extends SignAction {
@@ -39,8 +40,8 @@ public class InterLink extends SignAction {
             }
 
             String trainName = Main.plugin.getConfig().getString("serverName") + "-" + event.getGroup().getProperties().getTrainName();
-            List<String> passengers = new ArrayList<String>();
-            List<Player> players = new ArrayList<Player>();
+            List<String> passengers = new ArrayList<>();
+            List<Player> players = new ArrayList<>();
 
             String trainID = UUID.randomUUID().toString().split("-")[0];
             MinecartGroup group = event.getGroup();
@@ -93,16 +94,27 @@ public class InterLink extends SignAction {
 
             event.getGroup().destroy();
 
-            if (Integer.parseInt(server[1]) != Main.plugin.getConfig().getInt("port")) {
-                Client client = new Client(Integer.parseInt(server[1]));
+            String[] ip_port = server[1].split(":");
+            String dest = ip_port[0];
+            int port = Integer.parseInt(ip_port[1]);
+
+            String lhcheck;
+            if(dest.equalsIgnoreCase("localhost")){
+                lhcheck = ip;
+            } else {
+                lhcheck = dest;
+            }
+
+            if (port == Main.plugin.getConfig().getInt("port") && lhcheck.equalsIgnoreCase(ip)) {
+                for (Player player : players)
+                    player.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + "Error: Cannot send Players to the Same Server");
+            } else {
+                Client client = new Client(dest,port);
                 client.send(packet.toString());
                 client.close();
 
                 for (Player player : players)
-                    Main.plugin.send(player, server[0]);
-            } else {
-                for (Player player : players)
-                    player.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + "Error: Cannot send Players to the Same Server");
+                    Main.send(player, server[0]);
             }
         }
     }

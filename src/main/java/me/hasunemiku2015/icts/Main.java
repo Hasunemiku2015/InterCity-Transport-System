@@ -1,26 +1,20 @@
 package me.hasunemiku2015.icts;
 
-import com.bergerkiller.bukkit.tc.TrainCarts;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
 import com.bergerkiller.bukkit.tc.controller.type.MinecartMemberRideable;
-import com.bergerkiller.bukkit.tc.events.TrainCartsListener;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import me.hasunemiku2015.icts.ServerManager.FreezeInterLinkPlayer;
-import me.hasunemiku2015.icts.ServerManager.FreezeInventory;
 import me.hasunemiku2015.icts.ServerManager.Server;
 import me.hasunemiku2015.icts.TCActions.SignToggler;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -34,15 +28,17 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
 
     // Socket Server
     private Server server;
+    public static List<String> whitelist;
 
     //Players to be freezed
     public static List<String> players;
-    private Map<UUID, HashMap<String, Object>> passengers = new HashMap<UUID, HashMap<String, Object>>();
+    private final Map<UUID, HashMap<String, Object>> passengers = new HashMap<>();
 
     @Override
     public void onEnable() {
         plugin = this;
         players = new ArrayList<>();
+        whitelist = this.getConfig().getStringList("whitelist.ip");
 
         //Create Server Socket
         server = new Server();
@@ -60,8 +56,6 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
 
         // Register Event
         PluginManager pm = this.getServer().getPluginManager();
-        pm.registerEvents(new FreezeInventory(),this);
-        pm.registerEvents(new FreezeInterLinkPlayer(),this);
         pm.registerEvents(this, this);
 
         Bukkit.getLogger().info("ICTS is initializing");
@@ -72,39 +66,8 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
         SignToggler.deinit();
         server.close();
     }
-/*
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerSpawn(PlayerSpawnLocationEvent e) {
-        UUID uuid = e.getPlayer().getUniqueId();
 
-        if (!passengers.containsKey(uuid))
-            return;
-
-        HashMap<String, Object> passenger = passengers.get(uuid);
-        String trainName = (String) passenger.get("trainName");
-
-        plugin.getLogger().info("Try to find position of train '" + trainName + "' to spawn " + e.getPlayer().getName());
-
-        for (MinecartGroup group : MinecartGroupStore.getGroups()) {
-            TrainProperties trainProperties = group.getProperties();
-            if (trainProperties.getTrainName().equals(trainName)) {
-                Player player = e.getPlayer();
-                Location spawnLoc = group.get(0).getBlock().getLocation();
-
-                if (player.isFlying())
-                    player.setFlying(false);
-
-                e.setSpawnLocation(spawnLoc);
-                plugin.getLogger().info("Spawn player " + player.getName() + " at ");
-                plugin.getLogger().info(spawnLoc.toString());
-                return;
-            }
-        }
-
-        plugin.getLogger().info("Train '" + trainName + "' not found.");
-    }*/
-
-    @EventHandler(priority = EventPriority.HIGHEST)
+   @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerSpawn(PlayerSpawnLocationEvent e) {
         plugin.getLogger().info("SPAWNEVENT");
         UUID uuid = e.getPlayer().getUniqueId();
@@ -124,7 +87,7 @@ public class Main extends JavaPlugin implements Listener, PluginMessageListener 
             TrainProperties trainProperties = group.getProperties();
             if (trainProperties.getTrainName().equals(trainName)) {
                 MinecartMember cart = group.get(cartIndex);
-                if (cart != null && (cart instanceof MinecartMemberRideable) && passengers.containsKey(uuid)) {
+                if ((cart instanceof MinecartMemberRideable) && passengers.containsKey(uuid)) {
                     if (player.isFlying())
                         player.setFlying(false);
 
