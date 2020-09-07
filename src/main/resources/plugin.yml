@@ -2,4 +2,4 @@ name: InterCity-Transport-System
 version: ${project.version}
 main: me.hasunemiku2015.icts.Main
 api-version: 1.15
-depend: [Train_Carts]
+depend: [Train_Carts, BKCommonLib]
