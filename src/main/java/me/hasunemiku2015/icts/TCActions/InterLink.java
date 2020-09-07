@@ -71,8 +71,16 @@ public class InterLink extends SignAction {
             int x = (int) Double.parseDouble(coords[0]);
             int y = (int) Double.parseDouble(coords[1]);
             int z = (int) Double.parseDouble(coords[2]);
+            
+            String ip = null;
+            try {
+                InetAddress ia = InetAddress.getLocalHost();
+                ip = ia.getHostAddress();
+            } catch (Exception ignored) {
+            }
 
             ConfigurationNode packet = new ConfigurationNode();
+            packet.set("ip",ip + ":" + Bukkit.getServer().getPort());
             packet.set("world", world);
             packet.set("x", x);
             packet.set("y", y);
