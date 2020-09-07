@@ -1,5 +1,7 @@
 package me.hasunemiku2015.icts;
 
+import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
+import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import me.hasunemiku2015.icts.listener.PlayerSpawnListener;
@@ -61,6 +63,15 @@ public class ICTS extends JavaPlugin implements Listener {
         out.writeUTF("Connect");
         out.writeUTF(server);
         player.sendPluginMessage(this, "BungeeCord", out.toByteArray());
+    }
+
+    public MinecartGroup findTrain(String trainName) {
+        for (MinecartGroup group : MinecartGroupStore.getGroups()) {
+            if (group.getProperties().getTrainName().equals(trainName))
+                return group;
+        }
+
+        return null;
     }
 }
 

@@ -51,10 +51,10 @@ public class Client extends Thread {
             pw.write(output);
             pw.flush();
 
-            if (ICTS.config.isDebugEnabled()) {
+            /*if (ICTS.config.isDebugEnabled()) {
                 ICTS.plugin.getLogger().info("Sent:");
                 ICTS.plugin.getLogger().info(output);
-            }
+            }*/
         } catch (Exception ex) {
             ex.printStackTrace();
         }

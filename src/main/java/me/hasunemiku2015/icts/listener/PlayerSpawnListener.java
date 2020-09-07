@@ -7,6 +7,7 @@ import com.bergerkiller.bukkit.tc.controller.type.MinecartMemberRideable;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import me.hasunemiku2015.icts.ICTS;
 import me.hasunemiku2015.icts.Passenger;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,21 +36,29 @@ public class PlayerSpawnListener implements Listener {
         ICTS.plugin.getLogger().info("Try to find train '" + trainName + "' for " + player.getName() + " cartIndex: " + cartIndex);
 
         // Try to find train and set player as passenger
-        for (MinecartGroup group : MinecartGroupStore.getGroups()) {
-            TrainProperties trainProperties = group.getProperties();
-            if (trainProperties.getTrainName().equals(trainName)) {
-                MinecartMember cart = group.get(cartIndex);
-                if (cart instanceof MinecartMemberRideable) {
-                    if (player.isFlying())
-                        player.setFlying(false);
+        MinecartGroup train = ICTS.plugin.findTrain(trainName);
 
-                    e.setSpawnLocation(cart.getBlock().getLocation());
-                    cart.getEntity().setPassenger(player);
+        if (train != null) {
+            MinecartMember cart = train.get(cartIndex);
 
-                    ICTS.plugin.getLogger().info("Set player " + player.getName() + " as passenger of '" + trainName + "' at cartIndex: " + cartIndex);
-                    Passenger.remove(uuid);
-                    return;
-                }
+            if (cart instanceof MinecartMemberRideable) {
+                if (player.isFlying())
+                    player.setFlying(false);
+
+                e.setSpawnLocation(cart.getBlock().getLocation());
+                cart.getEntity().setPassenger(player);
+
+                // Try to fix that re-entering failes sometimes (maybe caused by another plugin?)
+                Bukkit.getScheduler().runTaskLater(ICTS.plugin, new Runnable() {
+                    @Override
+                    public void run() {
+                        if (cart.getEntity().getPlayerPassengers().contains(player))
+                            cart.getEntity().setPassenger(player);
+                    }
+                }, 20L*3);
+
+                ICTS.plugin.getLogger().info("Set player " + player.getName() + " as passenger of '" + trainName + "' at cartIndex: " + cartIndex);
+                Passenger.remove(uuid);
             }
         }
     }

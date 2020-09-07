@@ -93,10 +93,10 @@ public class Server extends Thread {
                         received.append(inputLine + "\r\n");
                     }
 
-                    if (ICTS.config.isDebugEnabled()) {
+                    /*if (ICTS.config.isDebugEnabled()) {
                         ICTS.plugin.getLogger().info("Received:");
                         ICTS.plugin.getLogger().info(received.toString());
-                    }
+                    }*/
 
                     // Receive dataPacket
                     ConfigurationNode dataPacket = new ConfigurationNode();
