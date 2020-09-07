@@ -1,3 +1,21 @@
-#Port for server socket to recieve data from (Make sure it is different from any other server/socket port)
+# Port for server socket to recieve data from
+# (Make sure it is different from any other server/socket port)
 port: 5000
-serverName: 'server1'
+
+# Server Name
+serverName: "server1"
+
+# Whitelist
+whitelist:
+  enabled: true
+  ip:
+    - 127.0.0.1
+
+messages:
+  prefix: "&a[&eICTS&a]&r: "
+  noWorld: "&cCouldn't find a world called &e%world%."
+  noSign: "&cCouldn't find a &e'&aicreceive&e'&c-sign &cat: &e%x% %y% %z%"
+  noRotation: "&cUnable to retrieve rotation-data from &e'&aicreceive&e'&c-sign."
+  noRail: "&cCouln't find any rail above the &e'&aicreceive&e'&c-sign."
+
+debug: false

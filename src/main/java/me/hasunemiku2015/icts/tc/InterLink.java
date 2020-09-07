@@ -1,4 +1,4 @@
-package me.hasunemiku2015.icts.TCActions;
+package me.hasunemiku2015.icts.tc;
 
 import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.tc.Permission;
@@ -10,8 +10,8 @@ import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
 import com.bergerkiller.bukkit.tc.signactions.SignActionType;
 import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
-import me.hasunemiku2015.icts.Main;
-import me.hasunemiku2015.icts.ServerManager.Client;
+import me.hasunemiku2015.icts.ICTS;
+import me.hasunemiku2015.icts.net.Client;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
@@ -29,20 +29,25 @@ public class InterLink extends SignAction {
     @Override
     public void execute(SignActionEvent event) {
         if (event.isAction(SignActionType.GROUP_ENTER) && event.isPowered()) {
-            ConfigurationNode train = event.getGroup().saveConfig();
+            List<String> passengers = new ArrayList<String>();
+            List<Player> players = new ArrayList<Player>();
+
+            // Get trainProperties and owners
+            ConfigurationNode trainProperties = event.getGroup().saveConfig();
             Set<String> owners = event.getGroup().getProperties().getOwners();
 
-            Set<ConfigurationNode> nodes = train.getNode("carts").getNodes();
+            // Remove lastPathNode from cartProperties
+            Set<ConfigurationNode> nodes = trainProperties.getNode("carts").getNodes();
             for (ConfigurationNode cart : nodes) {
                 if (cart.contains("lastPathNode"))
                     cart.set("lastPathNode", "");
             }
 
-            String trainName = Main.plugin.getConfig().getString("serverName") + "-" + event.getGroup().getProperties().getTrainName();
-            List<String> passengers = new ArrayList<String>();
-            List<Player> players = new ArrayList<Player>();
-
+            // Generate new name
             String trainID = UUID.randomUUID().toString().split("-")[0];
+            String trainName = ICTS.config.getServerName() + "-" + event.getGroup().getProperties().getTrainName();
+
+            // Get passengers
             MinecartGroup group = event.getGroup();
             for (int i = 0; i < group.size(); i++) {
                 MinecartMember cart = group.get(i);
@@ -64,7 +69,9 @@ public class InterLink extends SignAction {
             String world = event.getLine(1).split(" ")[1];
 
             // line3: servername;port
-            String[] server = event.getLine(2).split(";");
+            String[] serverInfo = event.getLine(2).split(";");
+            String serverName = serverInfo[0];
+            int port = Integer.parseInt(serverInfo[1]);
 
             // line4: x y z
             String[] coords = event.getLine(3).split(" ");
@@ -72,26 +79,37 @@ public class InterLink extends SignAction {
             int y = (int) Double.parseDouble(coords[1]);
             int z = (int) Double.parseDouble(coords[2]);
 
-            ConfigurationNode packet = new ConfigurationNode();
-            packet.set("world", world);
-            packet.set("x", x);
-            packet.set("y", y);
-            packet.set("z", z);
-            packet.set("passengers", passengers);
-            packet.set("trainID", trainID);
-            packet.set("trainName", trainName);
-            packet.set("trainOwners", owners);
-            packet.set("train", train);
+            // Use ConfigurationNode to store informations
+            ConfigurationNode dataPacket = new ConfigurationNode();
+            dataPacket.set("target.world", world);
+            dataPacket.set("target.x", x);
+            dataPacket.set("target.y", y);
+            dataPacket.set("target.z", z);
+            dataPacket.set("train.passengers", passengers);
+            dataPacket.set("train.id", trainID);
+            dataPacket.set("train.newName", trainName);
+            dataPacket.set("train.owners", owners);
+            dataPacket.set("train.properties", trainProperties);
 
+            // Destroy train
             event.getGroup().destroy();
 
-            if (Integer.parseInt(server[1]) != Main.plugin.getConfig().getInt("port")) {
-                Client client = new Client(Integer.parseInt(server[1]));
-                client.send(packet.toString());
-                client.close();
+            if (port != ICTS.config.getPort()) {
 
-                for (Player player : players)
-                    Main.plugin.send(player, server[0]);
+                // Send dataPacket and players to other server
+                Bukkit.getScheduler().runTaskAsynchronously(ICTS.plugin, new Runnable() {
+                    @Override
+                    public void run() {
+                        Client client = new Client(port);
+                        client.send(dataPacket.toString()); // Serialize ConfigurationNode
+                        client.close();
+
+                        // Send dataPacket
+                        for (Player player : players)
+                            ICTS.plugin.sendToServer(player, serverName);
+                    }
+                });
+
             } else {
                 for (Player player : players)
                     player.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + "Error: Cannot send Players to the Same Server");
@@ -102,21 +120,20 @@ public class InterLink extends SignAction {
     @Override
     public boolean build(SignChangeActionEvent event) {
         String[] info = event.getLines();
-
-        String[] coors = info[3].split(" ");
+        String[] coords = info[3].split(" ");
 
         try {
-            Double.parseDouble(coors[0]);
-            Double.parseDouble(coors[1]);
-            Double.parseDouble(coors[2]);
-        } catch (Exception e) {
+            Double.parseDouble(coords[0]);
+            Double.parseDouble(coords[1]);
+            Double.parseDouble(coords[2]);
+        } catch (Exception ex) {
             return false;
         }
 
         SignBuildOptions opt = SignBuildOptions.create()
-                .setName("interlink outbound").setPermission(Permission.BUILD_TELEPORTER);
-
-        opt.setDescription("allow trains to \"teleport\" between servers");
+            .setName("interlink outbound")
+            .setPermission(Permission.BUILD_TELEPORTER)
+            .setDescription("allow trains to \"teleport\" between servers");
 
         return opt.handle(event.getPlayer());
     }

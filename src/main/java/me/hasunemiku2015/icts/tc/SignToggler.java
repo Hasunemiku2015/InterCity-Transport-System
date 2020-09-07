@@ -1,10 +1,9 @@
-package me.hasunemiku2015.icts.TCActions;
+package me.hasunemiku2015.icts.tc;
 
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
-import me.hasunemiku2015.icts.Main;
 
 public class SignToggler {
-    //TC Signs
+    // Register TC-ActionSigns
     private static final InterLink its = new InterLink();
     private static final InterLinkReceive itsr = new InterLinkReceive();
 

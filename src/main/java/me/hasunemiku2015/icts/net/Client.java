@@ -1,15 +1,17 @@
-package me.hasunemiku2015.icts.ServerManager;
+package me.hasunemiku2015.icts.net;
 
-import me.hasunemiku2015.icts.Main;
+import me.hasunemiku2015.icts.ICTS;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class Client {
+public class Client extends Thread {
+    private static Collection<Client> activeClients = new ArrayList<>();
+
     private Socket clientSocket;
     private OutputStream outputStream;
     private final int port;
@@ -28,6 +30,12 @@ public class Client {
         }
 
         isConnected = true;
+        Client.activeClients.add(this);
+    }
+
+    @Override
+    public void run() {
+
     }
 
     public Boolean isConnected() {
@@ -43,9 +51,10 @@ public class Client {
             pw.write(output);
             pw.flush();
 
-            // Debug
-            Main.plugin.getLogger().info("Sent:");
-            Main.plugin.getLogger().info(output);
+            if (ICTS.config.isDebugEnabled()) {
+                ICTS.plugin.getLogger().info("Sent:");
+                ICTS.plugin.getLogger().info(output);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -62,9 +71,26 @@ public class Client {
                 clientSocket.close();
 
             isConnected = false;
+            activeClients.remove(this);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public static Collection<Client> getActiveClients() {
+        return Client.activeClients;
+    }
+
+    public static void closeAll() {
+        int stopped = 0;
+
+        for (Client client : getActiveClients()) {
+            client.close();
+            stopped++;
+        }
+
+        if (ICTS.config.isDebugEnabled())
+            ICTS.plugin.getLogger().info("Stopped " + stopped + " active clients.");
     }
 }
 
