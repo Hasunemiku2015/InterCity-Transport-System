@@ -83,17 +83,15 @@ public class InterLink extends SignAction {
             packet.set("trainOwners", owners);
             packet.set("train", train);
 
+            event.getGroup().destroy();
+
             if (Integer.parseInt(server[1]) != Main.plugin.getConfig().getInt("port")) {
                 Client client = new Client(Integer.parseInt(server[1]));
                 client.send(packet.toString());
                 client.close();
 
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
-                    event.getGroup().destroy();
-
-                    for (Player player : players)
-                        Main.plugin.send(player, server[0]);
-                }, 5L);
+                for (Player player : players)
+                    Main.plugin.send(player, server[0]);
             } else {
                 for (Player player : players)
                     player.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + "Error: Cannot send Players to the Same Server");
