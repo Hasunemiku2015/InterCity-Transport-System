@@ -1,0 +1,3 @@
+#Port for server socket to recieve data from (Make sure it is different from any other server/socket port)
+port: 5000
+serverName: 'server1'
