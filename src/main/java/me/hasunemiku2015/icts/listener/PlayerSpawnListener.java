@@ -48,15 +48,6 @@ public class PlayerSpawnListener implements Listener {
                 e.setSpawnLocation(cart.getBlock().getLocation());
                 cart.getEntity().setPassenger(player);
 
-                // Try to fix that re-entering failes sometimes (maybe caused by another plugin?)
-                Bukkit.getScheduler().runTaskLater(ICTS.plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        if (cart.getEntity().getPlayerPassengers().contains(player))
-                            cart.getEntity().setPassenger(player);
-                    }
-                }, 20L*3);
-
                 ICTS.plugin.getLogger().info("Set player " + player.getName() + " as passenger of '" + trainName + "' at cartIndex: " + cartIndex);
                 Passenger.remove(uuid);
             }

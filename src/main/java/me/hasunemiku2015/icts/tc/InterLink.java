@@ -104,9 +104,13 @@ public class InterLink extends SignAction {
                         client.send(dataPacket.toString()); // Serialize ConfigurationNode
                         client.close();
 
-                        // Send dataPacket
-                        for (Player player : players)
-                            ICTS.plugin.sendToServer(player, serverName);
+                        Bukkit.getScheduler().runTaskLaterAsynchronously(ICTS.plugin, new Runnable() {
+                            @Override
+                            public void run() {
+                                for (Player player : players)
+                                    ICTS.plugin.sendToServer(player, serverName);
+                            }
+                        }, 5L);
                     }
                 });
 
