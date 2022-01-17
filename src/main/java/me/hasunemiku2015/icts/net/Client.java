@@ -9,37 +9,22 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Client extends Thread {
-    private static Collection<Client> activeClients = new ArrayList<>();
+public class Client {
+    private static final Collection<Client> activeClients = new ArrayList<>();
 
     private Socket clientSocket;
     private OutputStream outputStream;
-    private boolean isConnected;
 
-    public Client(String ip,int port) {
+    public Client(String ip , int port) {
         try {
             clientSocket = new Socket(ip, port);
             outputStream = clientSocket.getOutputStream();
         } catch (IOException ex) {
-            isConnected = false;
             ex.printStackTrace();
             return;
         }
 
-        isConnected = true;
         Client.activeClients.add(this);
-    }
-
-    @Override
-    public void run() {
-
-    }
-
-    public Boolean isConnected() {
-        if (isConnected && !clientSocket.isClosed())
-            return true;
-        else
-            return false;
     }
 
     public void send(String output) {
@@ -48,12 +33,12 @@ public class Client extends Thread {
             pw.write(output);
             pw.flush();
 
-            /*if (ICTS.config.isDebugEnabled()) {
+            if (ICTS.config.isDebugEnabled()) {
                 ICTS.plugin.getLogger().info("Sent:");
                 ICTS.plugin.getLogger().info(output);
-            }*/
+            }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ICTS.plugin.getLogger().severe("Cannot connect to Data Server!!");
         }
     }
 
@@ -67,7 +52,6 @@ public class Client extends Thread {
             if (!clientSocket.isClosed())
                 clientSocket.close();
 
-            isConnected = false;
             activeClients.remove(this);
         } catch (Exception ex) {
             ex.printStackTrace();

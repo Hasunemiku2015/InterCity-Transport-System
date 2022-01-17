@@ -1,12 +1,12 @@
-package me.hasunemiku2015.icts.TCActions;
+package me.hasunemiku2015.icts.tc;
 
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
-import me.hasunemiku2015.icts.Main;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class SignToggler {
-    //TC Signs
-    private static final InterLink its = new InterLink();
-    private static final InterLinkReceive itsr = new InterLinkReceive();
+    // Register TC-ActionSigns
+    private static final ICLink its = new ICLink();
+    private static final ICReceive itsr = new ICReceive();
 
     public static void init() {
         SignAction.register(its);

@@ -1,12 +1,50 @@
-#Port for server socket to recieve data from (Make sure it is different from any other server/socket port)
+# Port for server socket to receive data from
+# Make sure it is different from any other server/socket port
 port: 5000
 
-#Server Name
-serverName: 'server1'
+# Server Name
+serverName: "server1"
 
-#Whitelist(IP AND PORT)
+#Server List
+#Automatic Servers: Name/Data Server IP:Port
+#Manual Servers: Name/Data Server IP:Port
+serverlist:
+  servers:
+    - MyServer/127.0.0.1:5000
+  manualServers:
+    - MyManualServer/127.0.0.1:6000
+
+# Whitelist
 whitelist:
   enabled: false
   ip:
-    - 192.168.1.1:25565
-    - 192.168.0.1:25565
+    - 127.0.0.1:25565
+
+#Blacklist
+blacklist:
+  enabled: false
+  worlds:
+    - survival1
+    - survival2
+  server:
+    - server1
+    - server2
+
+#Entry Delay (Number of ticks before the player rides on a ICTS train when entering the dest. server.)
+#Default is 0 , recommend 10 for paper server without bungeecord
+entry-delay: 0
+
+#Customize your error messages here
+messages:
+  prefix: "&a[&eICTS&a]&r: "
+  sameServer: "&c&lError: &cCannot send players to the same server."
+  blacklistedWorld: "&c&lError: &cCannot send players to a blacklisted world."
+  blacklistedServer: "&c&lError: &cCannot send players to a blacklisted server."
+  noWorld: "&c&lError: &cCouldn't find a world called &e%world%."
+  noSign: "&c&lError: &cCouldn't find a &e'&aicreceive&e'&c-sign &cat: &e%x% %y% %z%"
+  noRotation: "&c&lError: &cUnable to retrieve rotation-data from &e'&aicreceive&e'&c-sign."
+  noRail: "&c&lError: &cCouldn't find any rail above the &e'&aicreceive&e'&c-sign."
+  switchServer: "&bPlease connect to &a%server% &bto continue your journey."
+
+#Debug Mode (Do not turn on unless a developer told you to do so)
+debug: false
