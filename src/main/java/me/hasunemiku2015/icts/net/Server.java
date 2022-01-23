@@ -91,7 +91,7 @@ public class Server extends Thread {
 
                     String inputLine;
                     while ((inputLine = reader.readLine()) != null) {
-                        received.append(inputLine).append("\r\n");
+                        received.append(inputLine).append(System.lineSeparator());
                     }
 
                     if (ICTS.config.isDebugEnabled()) {
@@ -232,7 +232,7 @@ public class Server extends Thread {
                             ICTS.plugin.getLogger().info("Direction: " + direction);
                             ICTS.plugin.getLogger().info("TrainName: " + trainID);
                             ICTS.plugin.getLogger().info("TrainName(New): " + trainNewName);
-                            ICTS.plugin.getLogger().info("Owners: " + ownerList.toString());
+                            ICTS.plugin.getLogger().info("Owners: " + ownerList);
                             ICTS.plugin.getLogger().info("Passengers: " + passengers.size());
                             ICTS.plugin.getLogger().info("Try to spawn a train with " + train.getMembers().size() + " carts...");
                         }
