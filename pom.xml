@@ -6,7 +6,7 @@
 
     <groupId>com.hasunemiku2015.icts</groupId>
     <artifactId>ICTS</artifactId>
-    <version>1.4</version>
+    <version>1.5beta-TC</version>
     <packaging>jar</packaging>
 
     <name>InterCity Transport System</name>
@@ -72,8 +72,8 @@
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.16.2-R0.1-SNAPSHOT</version>
+            <artifactId>spigot</artifactId>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

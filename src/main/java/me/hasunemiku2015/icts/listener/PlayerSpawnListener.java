@@ -1,18 +1,28 @@
 package me.hasunemiku2015.icts.listener;
 
+import com.bergerkiller.bukkit.common.entity.CommonEntity;
+import com.bergerkiller.bukkit.common.entity.type.CommonPlayer;
+import com.bergerkiller.bukkit.common.protocol.CommonPacket;
+import com.bergerkiller.bukkit.common.protocol.PacketType;
+import com.bergerkiller.bukkit.common.utils.CommonUtil;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
 import com.bergerkiller.bukkit.tc.controller.type.MinecartMemberRideable;
+import com.bergerkiller.reflection.net.minecraft.server.NMSPacketClasses;
 import me.hasunemiku2015.icts.ICTS;
 import me.hasunemiku2015.icts.Passenger;
+import me.hasunemiku2015.icts.nms.NMSMountPlayerPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.util.Vector;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 public class PlayerSpawnListener implements Listener {
 
@@ -35,21 +45,14 @@ public class PlayerSpawnListener implements Listener {
                 .info("Try to find train '" + trainName + "' for " + player.getName() + " cartIndex: " + cartIndex);
 
         // Try to find train and set player as passenger
-        MinecartGroup train = ICTS.plugin.findTrain(trainName);
-        if (train != null) {
-            event.setSpawnLocation(train.get(cartIndex).getBlock().getLocation());
-            Bukkit.getScheduler().runTaskLater(ICTS.plugin,
-                    () -> setPassenger(player, uuid, trainName, cartIndex, train), 2);
-        } else {
-            Bukkit.getScheduler().runTaskLater(ICTS.plugin, () -> {
-                MinecartGroup train2 = ICTS.plugin.findTrain(trainName);
-                if (train2 != null) {
-                    player.teleport(train2.get(cartIndex).getBlock().getLocation());
-                    Bukkit.getScheduler().runTaskLater(ICTS.plugin,
-                            () -> setPassenger(player, uuid, trainName, cartIndex, train), 2);
-                } else
-                    ICTS.plugin.getLogger().warning("Train '" + trainName + "' was not found.");
-            }, 7);
+        if (player.getVehicle() == null) {
+            MinecartGroup train = ICTS.plugin.findTrain(trainName);
+            if (train != null) {
+                CommonPlayer commonPlayer = CommonEntity.get(player);
+                commonPlayer.teleport(train.get(cartIndex).getBlock().getLocation());
+                CommonUtil.nextTick(() -> setPassenger(player, uuid, trainName, cartIndex, train));
+            } else
+                ICTS.plugin.getLogger().warning("Train '" + trainName + "' was not found.");
         }
     }
 
@@ -62,8 +65,10 @@ public class PlayerSpawnListener implements Listener {
                 if (player.isFlying())
                     player.setFlying(false);
 
-                // player.teleport(cart.getEntity().getLocation());
                 cart.addPassengerForced(player);
+
+                NMSMountPlayerPacket packet = new NMSMountPlayerPacket(player);
+                packet.sendPacket(cart.getEntity().getEntity());
 
                 ICTS.plugin.getLogger().info("Set player " + player.getName() + " as passenger of '" + trainName
                         + "' at cartIndex: " + cartIndex);
