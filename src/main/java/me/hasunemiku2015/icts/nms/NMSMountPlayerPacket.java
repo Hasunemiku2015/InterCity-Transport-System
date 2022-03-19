@@ -1,36 +1,27 @@
 package me.hasunemiku2015.icts.nms;
 
-import net.minecraft.server.v1_16_R3.PacketPlayOutMount;
-import net.minecraft.server.v1_16_R3.PlayerConnection;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Field;
-
 public class NMSMountPlayerPacket {
-    CraftPlayer player;
-    PlayerConnection connection;
+    private final Player player;
+
+    // net.minecraft.server.%s.PlayerConnection
+    private Object connection;
 
     public NMSMountPlayerPacket(Player player){
-        this.player = (CraftPlayer) player;
-        this.connection = this.player.getHandle().playerConnection;
+        this.player = player;
+        Object nmsPlayer = ReflectionHelper.castObject(player,
+                String.format("org.bukkit.craftbukkit.%s.entity.CraftPlayer", ReflectionHelper.version));
+        this.connection = ReflectionHelper.getField(ReflectionHelper.runMethod(nmsPlayer, null, "getHandle"),
+                "playerConnection");
     }
 
     public void sendPacket(Entity vehicle){
-        PacketPlayOutMount packet = new PacketPlayOutMount();
-        setFieldValue(packet, "a", vehicle.getEntityId());
-        setFieldValue(packet, "b", new int[]{player.getEntityId()});
-
-        connection.sendPacket(packet);
-    }
-
-    private void setFieldValue(Object variable, String name, Object value) {
-        try{
-            Class<?> cls = variable.getClass();
-            Field f = cls.getDeclaredField(name);
-            f.setAccessible(true);
-            f.set(variable, value);
-        } catch (Exception ignored){}
+        Object packet = ReflectionHelper.createBean(String.format("net.minecraft.server.%s.PacketPlayOutMount",
+                ReflectionHelper.version));
+        ReflectionHelper.setFieldValue(packet, "a", vehicle.getEntityId());
+        ReflectionHelper.setFieldValue(packet, "b", new int[]{player.getEntityId()});
+        ReflectionHelper.runMethod(connection, new Object[]{packet}, "sendPacket");
     }
 }
