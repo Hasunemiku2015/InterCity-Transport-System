@@ -30,9 +30,6 @@ public class Config {
     private final String noRailMessage;
     private final String switchServerMessage;
 
-    //Entry Delay
-    private final int entryDelay;
-
     protected Config() {
         ICTS.plugin.saveDefaultConfig();
         Configuration config = ICTS.plugin.getConfig();
@@ -58,8 +55,6 @@ public class Config {
         noRotationMessage = config.getString("messages.noRotation");
         noRailMessage = config.getString("messages.noRail");
         switchServerMessage = config.getString("messages.switchServer");
-
-        entryDelay = config.getInt("entry-delay");
     }
 
     public int getPort() {
@@ -98,9 +93,5 @@ public class Config {
     public String getNoRailMessage() { return noRailMessage; }
     public String getSwitchServerMessage() {
         return switchServerMessage;
-    }
-
-    public int getEntryDelay(){
-        return entryDelay;
     }
 }

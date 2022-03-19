@@ -30,10 +30,6 @@ blacklist:
     - server1
     - server2
 
-#Entry Delay (Number of ticks before the player rides on a ICTS train when entering the dest. server.)
-#Default is 0 , recommend 10 for paper server without bungeecord
-entry-delay: 0
-
 #Customize your error messages here
 messages:
   prefix: "&a[&eICTS&a]&r: "
