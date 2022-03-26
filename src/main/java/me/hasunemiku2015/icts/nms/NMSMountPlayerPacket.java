@@ -7,9 +7,9 @@ public class NMSMountPlayerPacket {
     private final Player player;
 
     // net.minecraft.server.%s.PlayerConnection
-    private Object connection;
+    private final Object connection;
 
-    public NMSMountPlayerPacket(Player player){
+    public NMSMountPlayerPacket(Player player) {
         this.player = player;
         Object nmsPlayer = ReflectionHelper.castObject(player,
                 String.format("org.bukkit.craftbukkit.%s.entity.CraftPlayer", ReflectionHelper.version));
@@ -17,10 +17,10 @@ public class NMSMountPlayerPacket {
                 "playerConnection");
     }
 
-    public void sendPacket(Entity vehicle){
+    public void sendPacket(Entity entity) {
         Object packet = ReflectionHelper.createBean(String.format("net.minecraft.server.%s.PacketPlayOutMount",
                 ReflectionHelper.version));
-        ReflectionHelper.setFieldValue(packet, "a", vehicle.getEntityId());
+        ReflectionHelper.setFieldValue(packet, "a", entity.getEntityId());
         ReflectionHelper.setFieldValue(packet, "b", new int[]{player.getEntityId()});
         ReflectionHelper.runMethod(connection, new Object[]{packet}, "sendPacket");
     }

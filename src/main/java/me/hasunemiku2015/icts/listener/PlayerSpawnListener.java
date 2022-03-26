@@ -7,12 +7,15 @@ import com.bergerkiller.bukkit.tc.controller.type.MinecartMemberRideable;
 import me.hasunemiku2015.icts.ICTS;
 import me.hasunemiku2015.icts.Passenger;
 import me.hasunemiku2015.icts.nms.NMSMountPlayerPacket;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.UUID;
 
 public class PlayerSpawnListener implements Listener {
@@ -25,9 +28,17 @@ public class PlayerSpawnListener implements Listener {
         // Look if player should be a passenger
         Passenger passengerData = Passenger.get(uuid);
 
-        // This player is not our passenger
-        if (passengerData == null)
-            return;
+        // Check if player is sent from Offline Mode
+        if (passengerData == null) {
+            String userName = player.getName();
+            UUID offlineUUID = UUID.nameUUIDFromBytes(String.format("OfflinePlayer:%s", userName)
+                    .getBytes(StandardCharsets.UTF_8));
+            passengerData = Passenger.get(offlineUUID);
+
+            // This player is not our passenger
+            if (passengerData == null)
+                return;
+        }
 
         String trainName = passengerData.getTrainName();
         int cartIndex = passengerData.getCartIndex();
@@ -39,7 +50,7 @@ public class PlayerSpawnListener implements Listener {
         MinecartGroup train = ICTS.plugin.findTrain(trainName);
         if (train != null) {
             event.setSpawnLocation(train.get(cartIndex).getBlock().getLocation());
-            CommonUtil.nextTick(() -> setPassenger(player, uuid, trainName, cartIndex, train));
+            CommonUtil.nextTick(()-> setPassenger(player, uuid, trainName, cartIndex, train));
         } else
             ICTS.plugin.getLogger().warning("Train '" + trainName + "' was not found.");
     }
@@ -51,10 +62,12 @@ public class PlayerSpawnListener implements Listener {
         if (cart instanceof MinecartMemberRideable) {
             if (player.isFlying())
                 player.setFlying(false);
-            cart.addPassengerForced(player);
 
+            cart.addPassengerForced(player);
             NMSMountPlayerPacket packet = new NMSMountPlayerPacket(player);
-            packet.sendPacket(cart.getEntity().getEntity());
+            packet.sendPacket(Objects.requireNonNull(player.getVehicle()));
+            Bukkit.getScheduler().runTaskLater(ICTS.plugin, () ->
+                    packet.sendPacket(Objects.requireNonNull(player.getVehicle())), 60);
 
             ICTS.plugin.getLogger().info("Set player " + player.getName() + " as passenger of '" + trainName
                     + "' at cartIndex: " + cartIndex);

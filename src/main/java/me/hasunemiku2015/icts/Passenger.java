@@ -33,6 +33,7 @@ public class Passenger {
     }
 
     public static Passenger get(UUID uuid) {
+        System.out.println(passengers.keySet());
         if (passengers.containsKey(uuid))
             return passengers.get(uuid);
         return null;
