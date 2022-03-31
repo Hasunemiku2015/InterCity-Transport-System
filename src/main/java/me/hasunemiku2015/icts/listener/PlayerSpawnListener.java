@@ -1,6 +1,5 @@
 package me.hasunemiku2015.icts.listener;
 
-import com.bergerkiller.bukkit.common.utils.CommonUtil;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
 import com.bergerkiller.bukkit.tc.controller.type.MinecartMemberRideable;
@@ -49,10 +48,19 @@ public class PlayerSpawnListener implements Listener {
         // Try to find train and set player as passenger
         MinecartGroup train = ICTS.plugin.findTrain(trainName);
         if (train != null) {
-            event.setSpawnLocation(train.get(cartIndex).getBlock().getLocation());
-            CommonUtil.nextTick(()-> setPassenger(player, uuid, trainName, cartIndex, train));
-        } else
-            ICTS.plugin.getLogger().warning("Train '" + trainName + "' was not found.");
+            event.setSpawnLocation(train.get(cartIndex).getEntity().getLocation());
+            setPassenger(player, uuid, trainName, cartIndex, train);
+        } else {
+            Bukkit.getScheduler().runTaskLater(ICTS.plugin, () -> {
+                MinecartGroup train2 = ICTS.plugin.findTrain(trainName);
+                if (train2 != null) {
+                    player.teleport(train2.get(cartIndex).getEntity().getLocation());
+                    setPassenger(player, uuid, trainName, cartIndex, train2);
+                } else {
+                    ICTS.plugin.getLogger().warning("Train '" + trainName + "' was not found.");
+                }
+            }, 60);
+        }
     }
 
     @SuppressWarnings("rawtypes")

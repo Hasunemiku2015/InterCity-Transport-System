@@ -238,10 +238,13 @@ public class Server extends Thread {
                         }
 
                         // Spawn train
-//                        MinecartGroup spawnedTrain = MinecartGroup.spawn(train, SignActionSpawn.getSpawnPositions(railLoc, false, direction, train.getMembers()));
                         MinecartGroup spawnedTrain = MinecartGroup.spawn(train, train.findSpawnLocations(railLoc, new Vector(0,0,0), SpawnableGroup.SpawnMode.CENTER));
                         spawnedTrain.getProperties().setTrainName(trainID);
                         spawnedTrain.getProperties().setDisplayName(trainNewName);
+
+                        if (ICTS.config.isKeepChunksLoaded()){
+                            spawnedTrain.getProperties().setKeepChunksLoaded(true);
+                        }
 
                         for (CartProperties cartProp : spawnedTrain.getProperties())
                             for(String s : owners)
@@ -304,6 +307,10 @@ public class Server extends Thread {
                 e.printStackTrace();
             }
         }
+    }
+
+    public int getPort() {
+        return port;
     }
 }
 

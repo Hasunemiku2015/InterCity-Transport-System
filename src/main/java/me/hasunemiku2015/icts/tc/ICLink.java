@@ -62,11 +62,14 @@ public class ICLink extends SignAction {
                 if (!(cart instanceof MinecartMemberRideable))
                     continue;
 
-                Entity entity = cart.getEntity().getEntity().getPassenger();
-                if (entity instanceof Player) {
-                    Player player = (Player) entity;
-                    passengers.add(player.getUniqueId() + ";" + trainID + ";" + i);
-                    players.add(player);
+                @SuppressWarnings("unchecked")
+                List<Entity> entList = cart.getEntity().getPassengers();
+                for (Entity entity : entList) {
+                    if (entity instanceof Player) {
+                        Player player = (Player) entity;
+                        passengers.add(player.getUniqueId() + ";" + trainID + ";" + i);
+                        players.add(player);
+                    }
                 }
             }
 

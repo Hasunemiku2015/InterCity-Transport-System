@@ -17,6 +17,7 @@ public class Config {
     private final Collection<String> worldBlacklist;
     private final Collection<String> serverBlacklist;
 //    private Collection<Integer> portBlacklist;
+    private final boolean keepChunksLoaded;
 
     // Messages
     private final String prefix;
@@ -44,6 +45,7 @@ public class Config {
         worldBlacklist = config.getStringList("blacklist.worlds");
         serverBlacklist = config.getStringList("blacklist.server");
 //        portBlacklist = config.getIntegerList("blacklist.ports");
+        keepChunksLoaded = config.getBoolean("keep-chunks-loaded");
 
         prefix = config.getString("messages.prefix");
         sameServerMessage = config.getString("messages.sameServer");
@@ -55,6 +57,8 @@ public class Config {
         noRotationMessage = config.getString("messages.noRotation");
         noRailMessage = config.getString("messages.noRail");
         switchServerMessage = config.getString("messages.switchServer");
+
+
     }
 
     public int getPort() {
@@ -81,6 +85,9 @@ public class Config {
     }
     public Collection<String> getServerBlacklist() {
         return serverBlacklist;
+    }
+    public boolean isKeepChunksLoaded(){
+        return keepChunksLoaded;
     }
 
     public String getPrefix() { return prefix; }

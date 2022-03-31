@@ -30,6 +30,9 @@ blacklist:
     - server1
     - server2
 
+# Keep all Intercity-Transport-System trains loaded (default: true)
+keep-chunks-loaded: true
+
 #Customize your error messages here
 messages:
   prefix: "&a[&eICTS&a]&r: "

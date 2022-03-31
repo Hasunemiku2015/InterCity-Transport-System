@@ -1,25 +1,22 @@
 package me.hasunemiku2015.icts;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-
-
+import me.hasunemiku2015.icts.listener.PlayerSpawnListener;
+import me.hasunemiku2015.icts.net.Client;
+import me.hasunemiku2015.icts.net.Server;
+import me.hasunemiku2015.icts.tc.SignToggler;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.hasunemiku2015.icts.listener.PlayerSpawnListener;
-import me.hasunemiku2015.icts.net.Client;
-import me.hasunemiku2015.icts.net.Server;
-import me.hasunemiku2015.icts.tc.SignToggler;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class ICTS extends JavaPlugin implements Listener {
@@ -47,6 +44,9 @@ public class ICTS extends JavaPlugin implements Listener {
         // Register Events
         PluginManager pm = this.getServer().getPluginManager();
         pm.registerEvents(new PlayerSpawnListener(), this);
+
+        // Register Commands
+//        Objects.requireNonNull(ICTS.plugin.getCommand("ictsinfo")).setExecutor(new ICTSInfo());
 
         // Create Server Socket
         server = new Server();
@@ -105,6 +105,10 @@ public class ICTS extends JavaPlugin implements Listener {
 
     public String formatMsg(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
+    }
+
+    public Server getICTSServer(){
+        return server;
     }
 }
 
