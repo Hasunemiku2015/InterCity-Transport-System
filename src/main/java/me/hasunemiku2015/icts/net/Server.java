@@ -277,7 +277,7 @@ public class Server extends Thread {
             close();
 
             if (ICTS.config.isDebugEnabled())
-                ICTS.plugin.getLogger().info("Server stopped.");
+                ICTS.plugin.getLogger().info("Server Socket stopped.");
         }
     }
 

@@ -3,6 +3,8 @@ package me.hasunemiku2015.icts.listener;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
 import com.bergerkiller.bukkit.tc.controller.type.MinecartMemberRideable;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import me.hasunemiku2015.icts.ICTS;
 import me.hasunemiku2015.icts.Passenger;
 import me.hasunemiku2015.icts.nms.NMSMountPlayerPacket;
@@ -13,6 +15,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
@@ -27,17 +34,36 @@ public class PlayerSpawnListener implements Listener {
         // Look if player should be a passenger
         Passenger passengerData = Passenger.get(uuid);
 
+        // Check if server is in offline mode, and player is sent from online mode.
+        if (passengerData == null && !Bukkit.getOnlineMode()) {
+            String playerName = player.getName();
+            try {
+                URL mcAPI = new URL(
+                        String.format("https://api.mojang.com/users/profiles/minecraft/%s", playerName));
+                HttpURLConnection connection = (HttpURLConnection) mcAPI.openConnection();
+                connection.setRequestMethod("GET");
+                connection.connect();
+                if (connection.getResponseCode() != 200) return;
+
+                InputStream response = connection.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(response));
+                JsonObject json  = new JsonParser().parse(br).getAsJsonObject();
+                UUID premiumUUID = UUID.fromString(json.get("id").getAsString());
+                passengerData = Passenger.get(premiumUUID);
+            } catch (Exception ignored){}
+        }
+
         // Check if player is sent from Offline Mode
         if (passengerData == null) {
             String userName = player.getName();
             UUID offlineUUID = UUID.nameUUIDFromBytes(String.format("OfflinePlayer:%s", userName)
                     .getBytes(StandardCharsets.UTF_8));
             passengerData = Passenger.get(offlineUUID);
-
-            // This player is not our passenger
-            if (passengerData == null)
-                return;
         }
+
+        // This player is not our passenger
+        if (passengerData == null)
+            return;
 
         String trainName = passengerData.getTrainName();
         int cartIndex = passengerData.getCartIndex();
@@ -48,7 +74,12 @@ public class PlayerSpawnListener implements Listener {
         // Try to find train and set player as passenger
         MinecartGroup train = ICTS.plugin.findTrain(trainName);
         if (train != null) {
-            event.setSpawnLocation(train.get(cartIndex).getEntity().getLocation());
+            if (Bukkit.getOnlineMode())
+                event.setSpawnLocation(train.get(cartIndex).getEntity().getLocation());
+            else
+                player.teleport(train.get(cartIndex).getEntity().getLocation());
+
+
             setPassenger(player, uuid, trainName, cartIndex, train);
         } else {
             Bukkit.getScheduler().runTaskLater(ICTS.plugin, () -> {
