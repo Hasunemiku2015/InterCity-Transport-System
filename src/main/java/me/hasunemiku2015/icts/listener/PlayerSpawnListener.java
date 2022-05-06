@@ -36,6 +36,11 @@ public class PlayerSpawnListener implements Listener {
 
         // Check if server is in offline mode, and player is sent from online mode.
         if (passengerData == null && !Bukkit.getOnlineMode()) {
+            if (ICTS.config.isDebugEnabled()){
+                ICTS.plugin.getLogger().info("Offline mode server, cannot find uuid.");
+                ICTS.plugin.getLogger().info("Calling mojang API to get premium uuid.");
+            }
+
             String playerName = player.getName();
             try {
                 URL mcAPI = new URL(
@@ -48,9 +53,15 @@ public class PlayerSpawnListener implements Listener {
                 InputStream response = connection.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(response));
                 JsonObject json  = new JsonParser().parse(br).getAsJsonObject();
-                UUID premiumUUID = UUID.fromString(json.get("id").getAsString());
+                UUID premiumUUID = UUID.fromString(json.get("id").getAsString().replaceFirst(
+                        "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"
+                ));
                 passengerData = Passenger.get(premiumUUID);
-            } catch (Exception ignored){}
+
+                if (passengerData != null) uuid = premiumUUID;
+
+            } catch (Exception ignored){
+            }
         }
 
         // Check if player is sent from Offline Mode
@@ -82,11 +93,12 @@ public class PlayerSpawnListener implements Listener {
 
             setPassenger(player, uuid, trainName, cartIndex, train);
         } else {
+            final UUID finalUUID = uuid;
             Bukkit.getScheduler().runTaskLater(ICTS.plugin, () -> {
                 MinecartGroup train2 = ICTS.plugin.findTrain(trainName);
                 if (train2 != null) {
                     player.teleport(train2.get(cartIndex).getEntity().getLocation());
-                    setPassenger(player, uuid, trainName, cartIndex, train2);
+                    setPassenger(player, finalUUID, trainName, cartIndex, train2);
                 } else {
                     ICTS.plugin.getLogger().warning("Train '" + trainName + "' was not found.");
                 }
