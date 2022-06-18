@@ -47,9 +47,6 @@ public class ICTS extends JavaPlugin implements Listener {
         PluginManager pm = this.getServer().getPluginManager();
         pm.registerEvents(new PlayerSpawnListener(), this);
 
-        // Register Commands
-//        Objects.requireNonNull(ICTS.plugin.getCommand("ictsinfo")).setExecutor(new ICTSInfo());
-
         // Register NMS Global Variable
         RefractionEnvironmentVariableStore.put("VERSION",
                 Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3]);

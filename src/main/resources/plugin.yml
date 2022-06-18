@@ -7,11 +7,3 @@ permissions:
   icts.buildsign:
     description: Allows a player to construct icts sign
     default: op
-  icts.ictsinfo:
-    description: Allows a player to check the ip and port of icts receving server
-    default: op
-#commands:
-#  ictsinfo:
-#    description: Checks the ip and port for icts receiving server
-#    usage: /ictsinfo
-#    permission: icts.ictsinfo
