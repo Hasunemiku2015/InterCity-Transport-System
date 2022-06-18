@@ -6,7 +6,7 @@
 
     <groupId>com.hasunemiku2015.icts</groupId>
     <artifactId>ICTS</artifactId>
-    <version>1.5-beta-bec1fc24-ba38-11ec-8422-0242ac120002</version>
+    <version>1.5-beta-7f37493f-e427-4521-9919-4ae70710ff58</version>
     <packaging>jar</packaging>
 
     <name>InterCity Transport System</name>
@@ -67,6 +67,11 @@
             <id>bergerkiller</id>
             <url>https://ci.mg-dev.eu/plugin/repository/everything/</url>
         </repository>
+
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -89,6 +94,12 @@
             <artifactId>BKCommonLib</artifactId>
             <version>1.16.2-v1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.Hasunemiku2015</groupId>
+            <artifactId>Refraction</artifactId>
+            <version>master-403780bc41-1</version>
         </dependency>
     </dependencies>
 </project>

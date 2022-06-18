@@ -1,6 +1,6 @@
-package me.hasunemiku2015.icts.net;
+package com.hasunemiku2015.icts.net;
 
-import me.hasunemiku2015.icts.ICTS;
+import com.hasunemiku2015.icts.ICTS;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

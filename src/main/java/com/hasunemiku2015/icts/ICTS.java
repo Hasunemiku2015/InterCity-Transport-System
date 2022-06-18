@@ -1,13 +1,15 @@
-package me.hasunemiku2015.icts;
+package com.hasunemiku2015.icts;
 
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import me.hasunemiku2015.icts.listener.PlayerSpawnListener;
-import me.hasunemiku2015.icts.net.Client;
-import me.hasunemiku2015.icts.net.Server;
-import me.hasunemiku2015.icts.tc.SignToggler;
+import com.hasunemiku2015.icts.listener.PlayerSpawnListener;
+import com.hasunemiku2015.icts.net.Client;
+import com.hasunemiku2015.icts.net.Server;
+import com.hasunemiku2015.icts.tc.SignToggler;
+import com.hasunemiku2015.refraction.RefractionEnvironmentVariableStore;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -47,6 +49,10 @@ public class ICTS extends JavaPlugin implements Listener {
 
         // Register Commands
 //        Objects.requireNonNull(ICTS.plugin.getCommand("ictsinfo")).setExecutor(new ICTSInfo());
+
+        // Register NMS Global Variable
+        RefractionEnvironmentVariableStore.put("VERSION",
+                Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3]);
 
         // Create Server Socket
         server = new Server();

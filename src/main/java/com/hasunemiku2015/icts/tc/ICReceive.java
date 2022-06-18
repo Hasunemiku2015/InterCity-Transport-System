@@ -1,10 +1,10 @@
-package me.hasunemiku2015.icts.tc;
+package com.hasunemiku2015.icts.tc;
 
 import com.bergerkiller.bukkit.tc.events.SignActionEvent;
 import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
 import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
-import me.hasunemiku2015.icts.ICTS;
+import com.hasunemiku2015.icts.ICTS;
 
 import java.util.Arrays;
 

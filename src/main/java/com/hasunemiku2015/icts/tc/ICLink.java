@@ -1,4 +1,4 @@
-package me.hasunemiku2015.icts.tc;
+package com.hasunemiku2015.icts.tc;
 
 import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
@@ -10,8 +10,8 @@ import com.bergerkiller.bukkit.tc.properties.standard.type.CollisionOptions;
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
 import com.bergerkiller.bukkit.tc.signactions.SignActionType;
 import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
-import me.hasunemiku2015.icts.ICTS;
-import me.hasunemiku2015.icts.net.Client;
+import com.hasunemiku2015.icts.ICTS;
+import com.hasunemiku2015.icts.net.Client;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

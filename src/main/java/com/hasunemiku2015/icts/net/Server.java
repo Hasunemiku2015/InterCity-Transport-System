@@ -1,12 +1,12 @@
-package me.hasunemiku2015.icts.net;
+package com.hasunemiku2015.icts.net;
 
 import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.tc.SignActionHeader;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.spawnable.SpawnableGroup;
 import com.bergerkiller.bukkit.tc.properties.CartProperties;
-import me.hasunemiku2015.icts.ICTS;
-import me.hasunemiku2015.icts.Passenger;
+import com.hasunemiku2015.icts.ICTS;
+import com.hasunemiku2015.icts.Passenger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

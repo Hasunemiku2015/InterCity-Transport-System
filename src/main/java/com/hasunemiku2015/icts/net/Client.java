@@ -1,6 +1,6 @@
-package me.hasunemiku2015.icts.net;
+package com.hasunemiku2015.icts.net;
 
-import me.hasunemiku2015.icts.ICTS;
+import com.hasunemiku2015.icts.ICTS;
 
 import java.io.IOException;
 import java.io.OutputStream;

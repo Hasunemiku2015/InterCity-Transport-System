@@ -1,4 +1,4 @@
-package me.hasunemiku2015.icts.nms;
+package com.hasunemiku2015.icts.nms;
 
 import org.bukkit.Bukkit;
 

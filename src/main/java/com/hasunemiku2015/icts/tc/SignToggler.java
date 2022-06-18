@@ -1,4 +1,4 @@
-package me.hasunemiku2015.icts.tc;
+package com.hasunemiku2015.icts.tc;
 
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
 

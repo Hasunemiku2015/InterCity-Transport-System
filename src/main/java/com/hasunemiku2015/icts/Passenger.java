@@ -1,4 +1,4 @@
-package me.hasunemiku2015.icts;
+package com.hasunemiku2015.icts;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
