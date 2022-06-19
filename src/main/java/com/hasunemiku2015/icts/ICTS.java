@@ -12,7 +12,6 @@ import com.hasunemiku2015.refraction.RefractionEnvironmentVariableStore;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @SuppressWarnings("SpellCheckingInspection")
-public class ICTS extends JavaPlugin implements Listener {
+public class ICTS extends JavaPlugin {
     public static ICTS plugin;
     public static Config config;
 
@@ -108,10 +107,6 @@ public class ICTS extends JavaPlugin implements Listener {
 
     public String formatMsg(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
-    }
-
-    public Server getICTSServer(){
-        return server;
     }
 }
 
