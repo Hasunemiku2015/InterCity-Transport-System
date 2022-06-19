@@ -7,8 +7,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.hasunemiku2015.icts.Passenger;
 import com.hasunemiku2015.icts.ICTS;
-import com.hasunemiku2015.icts.nms.NMSMountPlayerPacket;
+import com.hasunemiku2015.icts.nms.PacketPlayOutMount;
+import com.hasunemiku2015.icts.nms.refraction.generated.CraftPlayerImplementation;
+import com.hasunemiku2015.icts.nms.refraction.generated.PacketPlayOutMountImplementation;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,7 +24,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.UUID;
 
 public class PlayerSpawnListener implements Listener {
@@ -115,10 +117,8 @@ public class PlayerSpawnListener implements Listener {
                 player.setFlying(false);
 
             cart.addPassengerForced(player);
-            NMSMountPlayerPacket packet = new NMSMountPlayerPacket(player);
-            packet.sendPacket(Objects.requireNonNull(player.getVehicle()));
-            Bukkit.getScheduler().runTaskLater(ICTS.plugin, () ->
-                    packet.sendPacket(Objects.requireNonNull(player.getVehicle())), 60);
+            sendPacket(player, player.getVehicle());
+            Bukkit.getScheduler().runTaskLater(ICTS.plugin, () -> sendPacket(player, player.getVehicle()), 60);
 
             ICTS.plugin.getLogger().info("Set player " + player.getName() + " as passenger of '" + trainName
                     + "' at cartIndex: " + cartIndex);
@@ -127,5 +127,14 @@ public class PlayerSpawnListener implements Listener {
             ICTS.plugin.getLogger()
                     .warning("Cart(" + cartIndex + ") at Train '" + trainName + "' is not rideable.");
         }
+    }
+
+    private void sendPacket(Player player, Entity entity) {
+        if (entity == null) return;
+
+        PacketPlayOutMount packet = PacketPlayOutMountImplementation.create(null).newInstance();
+        packet.a(entity.getEntityId());
+        packet.b(new int[] {player.getEntityId()});
+        CraftPlayerImplementation.create(player).getHandle().getPlayerConnection().sendPacket(packet);
     }
 }
