@@ -1,9 +1,0 @@
-name: InterCity-Transport-System
-version: ${project.version}
-main: com.hasunemiku2015.icts.ICTS
-api-version: 1.13
-depend: [Train_Carts, BKCommonLib]
-permissions:
-  icts.buildsign:
-    description: Allows a player to construct icts sign
-    default: op

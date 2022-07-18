@@ -1,17 +1,15 @@
-# Port for server socket to receive data from
-# Make sure it is different from any other server/socket port
-port: 5000
+# InterCity-Transport-System Configuration File
+# version: v1.6
 
-# Server Name
-serverName: "server1"
+# The maximum amount of waiting time (in ticks) for player to join after receiving ICTS train.  (Default: 6000)
+join-time-out: 6000
 
-#Server List
-#Automatic Servers: Name/Data Server IP:Port
-#Manual Servers: Name/Data Server IP:Port
-serverlist:
-  servers:
+# Server List
+# Format: Name/Data Server IP:Port
+server-list:
+  auto-servers:
     - MyServer/127.0.0.1:5000
-  manualServers:
+  manual-servers:
     - MyManualServer/127.0.0.1:6000
 
 # Whitelist
@@ -20,30 +18,25 @@ whitelist:
   ip:
     - 127.0.0.1
 
-#Blacklist
+# Blacklist
 blacklist:
   enabled: false
   worlds:
     - survival1
     - survival2
-  server:
-    - server1
-    - server2
 
-# Keep all Intercity-Transport-System trains loaded (default: true)
+# Keep all Intercity-Transport-System trains loaded (Default: true)
 keep-chunks-loaded: true
 
-#Customize your error messages here
+# Customize your error messages here
 messages:
   prefix: "&a[&eICTS&a]&r: "
-  sameServer: "&c&lError: &cCannot send players to the same server."
-  blacklistedWorld: "&c&lError: &cCannot send players to a blacklisted world."
-  blacklistedServer: "&c&lError: &cCannot send players to a blacklisted server."
-  noWorld: "&c&lError: &cCouldn't find a world called &e%world%."
-  noSign: "&c&lError: &cCouldn't find a &e'&aicreceive&e'&c-sign &cat: &e%x% %y% %z%"
-  noRotation: "&c&lError: &cUnable to retrieve rotation-data from &e'&aicreceive&e'&c-sign."
-  noRail: "&c&lError: &cCouldn't find any rail above the &e'&aicreceive&e'&c-sign."
-  switchServer: "&bPlease connect to &a%server% &bto continue your journey."
+  same-server: "&c&lError: &cCannot send players to the same server."
+  blacklisted-world: "&c&lError: &cCannot send players to a blacklisted world."
+  switch-server: "&bPlease connect to &a%server% &bto continue your journey."
 
-#Debug Mode (Do not turn on unless a developer told you to do so)
+# Enable Intra Server Train Sending (Default: false)
+intra-server-train-sending: false
+
+# Debug Mode (Warning: Spam Console)
 debug: false
