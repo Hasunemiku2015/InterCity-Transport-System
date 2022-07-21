@@ -23,10 +23,6 @@ repositories {
     mavenCentral()
     mavenLocal()
 
-    maven(uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/"))
-    maven(uri("https://oss.sonatype.org/content/repositories/snapshots"))
-    maven(uri("https://oss.sonatype.org/content/repositories/central"))
-
     maven(uri("https://ci.mg-dev.eu/plugin/repository/everything/"))
     maven(uri("https://jitpack.io"))
 }
@@ -35,7 +31,7 @@ dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.7.0")
 
-    compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot:1.18-R0.1-SNAPSHOT")
     compileOnly("com.bergerkiller.bukkit:TrainCarts:1.18.2-v2")
     compileOnly("com.bergerkiller.bukkit:BKCommonLib:1.18.2-v2")
     implementation("com.github.deanveloper:KBukkit:master-SNAPSHOT")
