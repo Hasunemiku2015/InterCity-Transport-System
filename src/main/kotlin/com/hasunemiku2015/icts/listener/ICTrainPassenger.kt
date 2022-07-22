@@ -25,10 +25,11 @@ class ICTrainPassenger(val playerUUID: UUID, val seatNum:Int, val spawnLocation:
             return Pair(UUID_PASSENGER_MAP[playerUUID]
                 ?: ICTrainPassenger(), UUID_PASSENGER_MAP[playerUUID] == null)
         }
-}
+    }
 
-private constructor() : this(UUID.randomUUID(), 0,
-        Location(Bukkit.getWorld("world"), 0.0, 0.0, 0.0))
+    private constructor() : this(UUID.randomUUID(), 0,
+            Location(Bukkit.getWorld("world"), 0.0, 0.0, 0.0))
+
 
     lateinit var icTrain: MinecartGroup
 
