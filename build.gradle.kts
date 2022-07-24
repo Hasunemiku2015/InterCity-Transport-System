@@ -17,7 +17,7 @@ tasks {
 }
 
 group = "com.hasunemiku2015"
-version = "1.6-beta-${UUID.randomUUID()}"
+version = "1.6"
 
 repositories {
     mavenCentral()
