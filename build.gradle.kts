@@ -1,6 +1,4 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
-import java.util.*
-import kotlin.collections.listOf
 
 plugins {
     kotlin("jvm") version "1.7.0"
