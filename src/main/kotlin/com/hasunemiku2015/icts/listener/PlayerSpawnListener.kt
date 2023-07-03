@@ -6,12 +6,14 @@ import com.hasunemiku2015.icts.CONFIGURATION
 import com.hasunemiku2015.icts.PLUGIN
 import com.hasunemiku2015.icts.net.HttpOutboundController
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.spigotmc.event.player.PlayerSpawnLocationEvent
 import java.nio.charset.StandardCharsets
-import java.util.*
+import java.util.UUID
+
 
 object PlayerSpawnListener : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -43,20 +45,20 @@ object PlayerSpawnListener : Listener {
 
         event.spawnLocation = ICTrainPassenger.fromUUID(uuid).first.spawnLocation
         if (ICTrainPassenger.fromUUID(uuid).first.isTrainReady()) {
-            setPassenger(ICTrainPassenger.fromUUID(uuid).first, event, false)
+            setPassenger(ICTrainPassenger.fromUUID(uuid).first, event.player, false)
         } else {
-            runTaskLater(PLUGIN, 10) { setPassenger(ICTrainPassenger.fromUUID(uuid).first, event, true) }
+            runTaskLater(PLUGIN, 10) { setPassenger(ICTrainPassenger.fromUUID(uuid).first,
+                event.player, true) }
         }
     }
 
-    private fun setPassenger(passengerData: ICTrainPassenger, event: PlayerSpawnLocationEvent, isDelayed: Boolean) {
-        val player = event.player
-
+    private fun setPassenger(passengerData: ICTrainPassenger, player: Player, isDelayed: Boolean) {
         if (!passengerData.isTrainReady()) { return }
         val train = passengerData.icTrain
         val cartIdx = passengerData.seatNum
         ICTrainPassenger.remove(passengerData)
-        PLUGIN.logger.info("Trying to find train ${train.properties?.trainName} for ${player.name} at cart index: $cartIdx")
+        PLUGIN.logger
+            .info("Trying to find train ${train.properties?.trainName} for ${player.name} at cart index: $cartIdx")
 
         if (isDelayed && (train[cartIdx].entity.location.world != player.location.world
                     || train[cartIdx].entity.location.distance(player.location) > 32)) {

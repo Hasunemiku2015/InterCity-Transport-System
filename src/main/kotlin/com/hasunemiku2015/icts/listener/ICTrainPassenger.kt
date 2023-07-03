@@ -16,9 +16,9 @@ class ICTrainPassenger(val playerUUID: UUID, val seatNum:Int, val spawnLocation:
         private val UUID_PASSENGER_MAP = hashMapOf<UUID, ICTrainPassenger>()
 
         @JvmStatic
-    fun remove(passengerData: ICTrainPassenger){
-        UUID_PASSENGER_MAP.remove(passengerData.playerUUID)
-    }
+        fun remove(passengerData: ICTrainPassenger){
+            UUID_PASSENGER_MAP.remove(passengerData.playerUUID)
+        }
 
         @JvmStatic
         fun fromUUID(playerUUID: UUID): Pair<ICTrainPassenger, Boolean> {

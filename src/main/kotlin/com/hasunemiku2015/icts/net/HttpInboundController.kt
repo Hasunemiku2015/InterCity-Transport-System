@@ -2,6 +2,7 @@ package com.hasunemiku2015.icts.net
 
 import com.bergerkiller.bukkit.common.config.ConfigurationNode
 import com.bergerkiller.bukkit.tc.SignActionHeader
+import com.bergerkiller.bukkit.tc.TrainCarts
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup
 import com.bergerkiller.bukkit.tc.controller.spawnable.SpawnableGroup
 import com.deanveloper.kbukkit.util.runTask
@@ -15,6 +16,7 @@ import org.bukkit.Location
 import org.bukkit.block.Sign
 import org.bukkit.block.data.Rail
 import org.bukkit.block.data.Rotatable
+import org.bukkit.block.sign.Side
 import org.bukkit.util.Vector
 import spark.Request
 import spark.Response
@@ -60,7 +62,7 @@ object HttpInboundController {
 
         val trainProp = ConfigurationNode()
         trainProp.loadFromString(inPacket.trainPropertyString)
-        val train = SpawnableGroup.fromConfig(trainProp)
+        val train = SpawnableGroup.fromConfig(TrainCarts.plugin, trainProp)
 
         runTask(PLUGIN) {
             if (Bukkit.getWorld(inPacket.worldName) == null) {
@@ -75,7 +77,8 @@ object HttpInboundController {
                 return@runTask
             }
             if (!SignActionHeader.parseFromSign(loc.block.state as Sign).isValid ||
-                !(loc.block.state as Sign).getLine(1).equals("icreceive", ignoreCase = true)) {
+                !(loc.block.state as Sign).getSide(Side.FRONT)
+                    .getLine(1).equals("icreceive", ignoreCase = true)) {
                 unRegisterPlayerData(icPassengers)
                 return@runTask
             }

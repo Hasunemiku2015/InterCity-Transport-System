@@ -19,8 +19,8 @@ version = "1.6"
 
 repositories {
     mavenCentral()
-    mavenLocal()
 
+    maven(uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/"))
     maven(uri("https://ci.mg-dev.eu/plugin/repository/everything/"))
     maven(uri("https://jitpack.io"))
 }
@@ -29,10 +29,10 @@ dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.7.0")
 
-    compileOnly("org.spigotmc:spigot:1.18-R0.1-SNAPSHOT")
-    compileOnly("com.bergerkiller.bukkit:TrainCarts:1.18.2-v2")
-    compileOnly("com.bergerkiller.bukkit:BKCommonLib:1.18.2-v2")
-    implementation("com.github.deanveloper:KBukkit:master-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
+    compileOnly("com.bergerkiller.bukkit:TrainCarts:1.20.1-v1")
+    compileOnly("com.bergerkiller.bukkit:BKCommonLib:1.20.1-v1")
+    implementation("com.github.deanveloper:KBukkit:master")
 
     compileOnly("com.sparkjava:spark-core:2.9.3")
     compileOnly("com.squareup.okhttp3:okhttp:4.10.0")
@@ -47,7 +47,7 @@ bukkit {
 
     permissions {
         register("icts.buildsign") {
-            description = "Allows a player to construct icts sign."
+            description = "Allows a player to construct icts signs."
             default = BukkitPluginDescription.Permission.Default.OP
         }
     }
